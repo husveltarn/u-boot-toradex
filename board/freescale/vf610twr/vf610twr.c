@@ -181,6 +181,18 @@ static void setup_iomux_qspi(void)
 	imx_iomux_v3_setup_multiple_pads(qspi0_pads, ARRAY_SIZE(qspi0_pads));
 }
 
+static void setup_iomux_dspi(void)
+{
+	static const iomux_v3_cfg_t dspi0_pads[] = {
+		VF610_PAD_PTB19__DSPI0_CS0,
+		VF610_PAD_PTB20__DSPI0_SIN,
+		VF610_PAD_PTB21__DSPI0_SOUT,
+		VF610_PAD_PTB22__DSPI0_SCK,
+	};
+
+	imx_iomux_v3_setup_multiple_pads(dspi0_pads, ARRAY_SIZE(dspi0_pads));
+}
+
 #ifdef CONFIG_FSL_ESDHC
 struct fsl_esdhc_cfg esdhc_cfg[1] = {
 	{ESDHC1_BASE_ADDR},
@@ -218,7 +230,7 @@ static void clock_init(void)
 	struct anadig_reg *anadig = (struct anadig_reg *)ANADIG_BASE_ADDR;
 
 	clrsetbits_le32(&ccm->ccgr0, CCM_REG_CTRL_MASK,
-		CCM_CCGR0_UART1_CTRL_MASK);
+		CCM_CCGR0_UART1_CTRL_MASK | CCM_CCGR0_DSPI0_CTRL_MASK);
 	clrsetbits_le32(&ccm->ccgr1, CCM_REG_CTRL_MASK,
 		CCM_CCGR1_PIT_CTRL_MASK | CCM_CCGR1_WDOGA5_CTRL_MASK);
 	clrsetbits_le32(&ccm->ccgr2, CCM_REG_CTRL_MASK,
@@ -299,6 +311,7 @@ int board_early_init_f(void)
 	setup_iomux_enet();
 	setup_iomux_i2c();
 	setup_iomux_qspi();
+    setup_iomux_dspi();
 #ifdef CONFIG_NAND_VF610_NFC
 	setup_iomux_nfc();
 #endif

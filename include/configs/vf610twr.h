@@ -111,6 +111,19 @@
 #define CONFIG_SYS_FSL_QSPI_LE
 #endif
 
+/* DSPI Configs */
+#ifdef CONFIG_FSL_DSPI
+#define MMAP_DSPI  SPI0_BASE_ADDR
+#define CONFIG_SYS_FSL_DSPI_LE
+#define CONFIG_SYS_DSPI_CTAR0	(DSPI_CTAR_TRSZ(7) | \
+					 DSPI_CTAR_PCSSCK_1CLK | \
+					 DSPI_CTAR_PASC(0) | \
+					 DSPI_CTAR_PDT(0) | \
+					 DSPI_CTAR_CSSCK(0) | \
+					 DSPI_CTAR_ASC(0) | \
+					 DSPI_CTAR_DT(0))
+#endif
+
 /* I2C Configs */
 #define CONFIG_CMD_I2C
 #define CONFIG_SYS_I2C
