@@ -144,6 +144,8 @@ typedef u64 iomux_v3_cfg_t;
 #define PAD_CTL_OBE_IBE_ENABLE	(3 << 0)
 #define PAD_CTL_OBE_ENABLE	(1 << 1)
 #define PAD_CTL_IBE_ENABLE	(1 << 0)
+#define PAD_CTL_OBE		(1 << 1)
+#define PAD_CTL_IBE		(1 << 0)
 
 #else
 
