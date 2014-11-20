@@ -105,16 +105,18 @@ int dspi_xfer(struct spi_slave *slave, uint bitlen, const void *dout,
 					dspi_tx(dspislave, ctrl, *spi_wr16++);
 				else
 					dspi_tx(dspislave, ctrl, *spi_wr++);
-				dspi_rx(dspislave);
 			}
+            else 
+				dspi_tx(dspislave, ctrl, CONFIG_SPI_IDLE_VAL);
 
 			if (din != NULL) {
-				dspi_tx(dspislave, ctrl, CONFIG_SPI_IDLE_VAL);
 				if (dspislave->charbit == 16)
 					*spi_rd16++ = dspi_rx(dspislave);
 				else
 					*spi_rd++ = dspi_rx(dspislave);
 			}
+            else
+                dspi_rx(dspislave);
 		}
 
 		len = 1;	/* remaining byte */
@@ -133,7 +135,6 @@ int dspi_xfer(struct spi_slave *slave, uint bitlen, const void *dout,
 				dspi_tx(dspislave, ctrl, *spi_wr16);
 			else
 				dspi_tx(dspislave, ctrl, *spi_wr);
-			dspi_rx(dspislave);
 #ifdef CONFIG_LS102xA
 			if (flags == SPI_XFER_END) {
 				ctrl &= ~DSPI_TFR_CONT;
@@ -142,14 +143,18 @@ int dspi_xfer(struct spi_slave *slave, uint bitlen, const void *dout,
 			}
 #endif
 		}
+        else
+			dspi_tx(dspislave, ctrl, CONFIG_SPI_IDLE_VAL);
 
 		if (din != NULL) {
-			dspi_tx(dspislave, ctrl, CONFIG_SPI_IDLE_VAL);
 			if (dspislave->charbit == 16)
 				*spi_rd16 = dspi_rx(dspislave);
 			else
 				*spi_rd = dspi_rx(dspislave);
 		}
+        else
+            dspi_rx(dspislave);
+
 	} else {
 		/* dummy read */
 		dspi_tx(dspislave, ctrl, CONFIG_SPI_IDLE_VAL);
