@@ -93,6 +93,19 @@ int dram_init(void)
 	return 0;
 }
 
+static void setup_iomux_dspi(void)
+{
+    static const iomux_v3_cfg_t dspi0_pads[] = {
+        VF610_PAD_PTD5__DSPI1_CS0,
+        VF610_PAD_PTD6__DSPI1_SIN,
+        VF610_PAD_PTD7__DSPI1_SOUT,
+        VF610_PAD_PTD8__DSPI1_SCK,
+    };
+
+    imx_iomux_v3_setup_multiple_pads(dspi0_pads, ARRAY_SIZE(dspi0_pads));
+}
+
+
 static void setup_iomux_uart(void)
 {
 	static const iomux_v3_cfg_t uart_pads[] = {
@@ -269,7 +282,7 @@ static void clock_init(void)
 	u32 pfd_clk_sel, ddr_clk_sel;
 
 	clrsetbits_le32(&ccm->ccgr0, CCM_REG_CTRL_MASK,
-			CCM_CCGR0_UART0_CTRL_MASK);
+			CCM_CCGR0_UART0_CTRL_MASK | CCM_CCGR0_DSPI1_CTRL_MASK);
 	clrsetbits_le32(&ccm->ccgr1, CCM_REG_CTRL_MASK,
 			CCM_CCGR1_PIT_CTRL_MASK | CCM_CCGR1_WDOGA5_CTRL_MASK |
 			CCM_CCGR1_USBC0_CTRL_MASK);
@@ -384,6 +397,7 @@ int board_early_init_f(void)
 	setup_iomux_uart();
 	setup_iomux_enet();
 	setup_iomux_i2c();
+	setup_iomux_dspi();
 #ifdef CONFIG_NAND_VF610_NFC
 	setup_iomux_nfc();
 #endif
