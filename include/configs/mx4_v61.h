@@ -154,7 +154,7 @@
 		"${mtdparts} ${setupargs} ${vidargs};" \
 		"echo Booting from NAND...; " \
 		"mx4_pic restart; " \
-		"nboot ${kernel_addr_r} 0 0x00200000; && bootm ${kernel_addr_r}"
+		"nboot ${kernel_addr_r} 0 0x00280000; && bootm ${kernel_addr_r}"
 
 #define PROBE_USB_FOR_HMUPDATE \
 	"if run is_firmware_update || mx4_pic is_extr; " \
