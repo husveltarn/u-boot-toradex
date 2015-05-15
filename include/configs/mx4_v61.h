@@ -311,4 +311,18 @@
 #define CONFIG_USB_GADGET_MASS_STORAGE
 #define CONFIG_CMD_USB_MASS_STORAGE
 
+/* DSPI Configs */
+#define CONFIG_FSL_DSPI
+#define CONFIG_CMD_SPI
+#define MMAP_DSPI  SPI1_BASE_ADDR
+#define CONFIG_SYS_FSL_DSPI_LE
+#define CONFIG_SYS_DSPI_CTAR0   (DSPI_CTAR_TRSZ(7) | \
+                     DSPI_CTAR_PCSSCK_1CLK | \
+                     DSPI_CTAR_PASC(0) | \
+                     DSPI_CTAR_PDT(0) | \
+                     DSPI_CTAR_CSSCK(0) | \
+                     DSPI_CTAR_ASC(0) | \
+                     DSPI_CTAR_DT(0))
+
+
 #endif /* __CONFIG_H */
