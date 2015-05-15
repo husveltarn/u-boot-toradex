@@ -16,6 +16,9 @@
 #include <config_cmd_default.h>
 #include <linux/sizes.h>
 
+/* Enable passing of ATAGs */
+#define CONFIG_CMDLINE_TAG
+
 #define CONFIG_VF610
 #define CONFIG_SYS_THUMB_BUILD
 #define CONFIG_USE_ARCH_MEMCPY
