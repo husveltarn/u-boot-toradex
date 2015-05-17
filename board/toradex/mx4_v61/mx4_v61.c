@@ -415,15 +415,6 @@ static void clock_init(void)
 #endif
 }
 
-static void mscm_init(void)
-{
-	struct mscm_ir *mscmir = (struct mscm_ir *)MSCM_IR_BASE_ADDR;
-	int i;
-
-	for (i = 0; i < MSCM_IRSPRC_NUM; i++)
-		writew(MSCM_IRSPRC_CP0_EN, &mscmir->irsprc[i]);
-}
-
 int board_phy_config(struct phy_device *phydev)
 {
 	if (phydev->drv->config)
@@ -435,7 +426,6 @@ int board_phy_config(struct phy_device *phydev)
 int board_early_init_f(void)
 {
 	clock_init();
-	mscm_init();
 
 	setup_iomux_uart();
 	setup_iomux_enet();
