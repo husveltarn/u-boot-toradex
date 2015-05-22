@@ -193,7 +193,7 @@
 	"mtdparts=" MTDPARTS_DEFAULT "\0" \
 	NFS_BOOTCMD \
 	SD_BOOTCMD \
-	"setethupdate=tftpboot ${kernel_addr_r} flash_eth.img\0" \
+	"setethupdate=usb start && tftpboot ${kernel_addr_r} flash_eth.img\0" \
 	"setsdupdate=setenv interface mmc; setenv drive 0; mmc rescan; " \
 		"load ${interface} ${drive}:1 ${kernel_addr_r} " \
 		"flash_blk.img\0" \

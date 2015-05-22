@@ -63,6 +63,10 @@ DECLARE_GLOBAL_DATA_PTR;
 	PAD_CTL_SPEED_MED | PAD_CTL_DSE_40ohm | PAD_CTL_HYS |	\
 	PAD_CTL_SRE_SLOW)
 
+#define NO_PULLUP	(					\
+	PAD_CTL_SPEED_MED | PAD_CTL_DSE_40ohm | PAD_CTL_HYS |	\
+	PAD_CTL_SRE_SLOW)
+
 #define WEAK_PULLDOWN	(PAD_CTL_PUS_100K_DOWN |		\
 	PAD_CTL_SPEED_MED | PAD_CTL_DSE_40ohm |			\
 	PAD_CTL_HYS | PAD_CTL_SRE_SLOW)
@@ -257,6 +261,24 @@ static int reset_enet_phy (struct mii_dev *bus)
 	gpio_set_value(GPIO_ENET_PHY_RESET, 1);
 
 	return 0;
+}
+
+/* mux the Apalis GPIO pins to gpio, so they can be used from the U-Boot commandline */
+iomux_v3_cfg_t const gpio_pads[] = {
+	MX6_PAD_NANDF_D4__GPIO2_IO04	| MUX_PAD_CTRL(WEAK_PULLUP),	/* Apalis GPIO1 */
+	MX6_PAD_NANDF_D5__GPIO2_IO05	| MUX_PAD_CTRL(WEAK_PULLUP),	/* Apalis GPIO2 */
+	MX6_PAD_NANDF_D6__GPIO2_IO06	| MUX_PAD_CTRL(WEAK_PULLUP),	/* Apalis GPIO3 */
+	MX6_PAD_NANDF_D7__GPIO2_IO07	| MUX_PAD_CTRL(WEAK_PULLUP),	/* Apalis GPIO4 */
+	MX6_PAD_NANDF_RB0__GPIO6_IO10	| MUX_PAD_CTRL(WEAK_PULLUP),	/* Apalis GPIO5 */
+	MX6_PAD_NANDF_WP_B__GPIO6_IO09	| MUX_PAD_CTRL(WEAK_PULLUP),	/* Apalis GPIO6 */
+	MX6_PAD_GPIO_2__GPIO1_IO02	| MUX_PAD_CTRL(WEAK_PULLDOWN),	/* Apalis GPIO7 */
+	MX6_PAD_GPIO_6__GPIO1_IO06	| MUX_PAD_CTRL(WEAK_PULLUP),	/* Apalis GPIO8 */
+	MX6_PAD_GPIO_4__GPIO1_IO04	| MUX_PAD_CTRL(WEAK_PULLUP),	/* Power Button */
+};
+
+static void setup_iomux_gpio(void)
+{
+	imx_iomux_v3_setup_multiple_pads(gpio_pads, ARRAY_SIZE(gpio_pads));
 }
 
 iomux_v3_cfg_t const usb_pads[] = {
@@ -804,6 +826,8 @@ int board_init(void)
 	setup_sata();
 #endif
 
+	setup_iomux_gpio();
+
 	return 0;
 }
 
@@ -853,8 +877,8 @@ int checkboard_fallback(void)
 #ifdef CONFIG_CMD_BMODE
 static const struct boot_mode board_boot_modes[] = {
 	/* 4 bit bus width */
-	{"mmc0",	MAKE_CFGVAL(0x40, 0x20, 0x00, 0x00)},
-	{"mmc1",	MAKE_CFGVAL(0x40, 0x28, 0x00, 0x00)},
+	{"mmc",	MAKE_CFGVAL(0x40, 0x20, 0x00, 0x00)},
+	{"sd",	MAKE_CFGVAL(0x40, 0x28, 0x00, 0x00)},
 	{NULL,		0},
 };
 #endif

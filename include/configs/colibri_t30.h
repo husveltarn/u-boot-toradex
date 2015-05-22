@@ -149,14 +149,14 @@
 	"fdt_board=eval-v3\0" \
 	NFS_BOOTCMD \
 	SD_BOOTCMD \
-	"setethupdate=tftpboot ${kernel_addr_r} flash_eth.img\0" \
+	"setethupdate=usb start && tftpboot ${kernel_addr_r} flash_eth.img\0" \
 	"setsdupdate=setenv interface mmc; setenv drive 1; mmc rescan; load " \
 		"${interface} ${drive}:1 ${kernel_addr_r} flash_blk.img\0" \
 	"setup=setenv setupargs asix_mac=${ethaddr} " \
 		"consoleblank=0 no_console_suspend=1 console=tty1 " \
 		"console=${console},${baudrate}n8 debug_uartport=lsport,0 " \
 		"vmalloc=128M mem=1012M@2048M fbmem=12M@3060M\0" \
-	"setusbupdate=setenv interface usb; setenv drive 0; " \
+	"setusbupdate=usb start && setenv interface usb; setenv drive 0; " \
 		"load ${interface} ${drive}:1 ${kernel_addr_r} " \
 		"flash_blk.img\0" \
 	"setupdate=run setsdupdate || run setusbupdate || run setethupdate;" \
