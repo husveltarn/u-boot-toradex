@@ -137,6 +137,9 @@
 #define CONFIG_FEC_MXC_PHYADDR		0
 #define CONFIG_PHYLIB
 #define CONFIG_PHY_MICREL
+#define CONFIG_TFTP_TSIZE
+#define CONFIG_IP_DEFRAG
+#define CONFIG_TFTP_BLOCKSIZE		16384
 
 #define CONFIG_IPADDR		192.168.10.2
 #define CONFIG_NETMASK		255.255.255.0
@@ -224,7 +227,7 @@
 #define CONFIG_SYS_PROMPT_HUSH_PS2	"> "
 #define CONFIG_SYS_PROMPT		"MX-4 V61 # "
 #undef CONFIG_AUTO_COMPLETE
-#define CONFIG_SYS_CBSIZE		256	/* Console I/O Buffer Size */
+#define CONFIG_SYS_CBSIZE		1024	/* Console I/O Buffer Size */
 #define CONFIG_SYS_PBSIZE		\
 			(CONFIG_SYS_CBSIZE + sizeof(CONFIG_SYS_PROMPT) + 16)
 #define CONFIG_SYS_MAXARGS		16	/* max number of command args */
