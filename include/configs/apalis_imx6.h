@@ -108,6 +108,9 @@
 #define CONFIG_FEC_MXC_PHYADDR		6
 #define CONFIG_PHYLIB
 #define CONFIG_PHY_MICREL
+#define CONFIG_TFTP_TSIZE
+#define CONFIG_IP_DEFRAG
+#define CONFIG_TFTP_BLOCKSIZE		16384
 
 /* USB Configs */
 /* Host */
