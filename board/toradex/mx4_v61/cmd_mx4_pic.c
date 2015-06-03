@@ -281,7 +281,7 @@ static int mx4_pic_is_hw_reset(void)
 	uint32_t reset_cause = 0;
 
 	if (mx4_spi_write(MX4_CMD_READ, MX4_CMD_RESET_CAUSE, &reset_cause))
-		return -1;
+		return 0;
 
 	printf("PIC reset cause: %s\n", mx4_pic_str_reset_cause(reset_cause));
 
@@ -338,7 +338,7 @@ static int do_mx4_pic(cmd_tbl_t *cmdtp, int flag, int argc,
 	}
 
 	if (strncmp(argv[1], "is_extr", 7) == 0) {
-		return mx4_pic_is_hw_reset() < 1;
+		return mx4_pic_is_hw_reset();
 	}
 
 	if (strncmp(argv[1], "restart", 7) == 0) {
