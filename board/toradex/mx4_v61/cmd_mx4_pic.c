@@ -281,7 +281,7 @@ static int mx4_pic_is_hw_reset(void)
 	uint32_t reset_cause = 0;
 
 	if (mx4_spi_write(MX4_CMD_READ, MX4_CMD_RESET_CAUSE, &reset_cause))
-		return 1;
+		return 0;
 
 	printf("PIC reset cause: %s\n", mx4_pic_str_reset_cause(reset_cause));
 
