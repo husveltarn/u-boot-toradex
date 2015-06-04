@@ -537,7 +537,11 @@ int checkboard_fallback(void)
 #if defined(CONFIG_OF_LIBFDT) && defined(CONFIG_OF_BOARD_SETUP)
 int ft_board_setup(void *blob, bd_t *bd)
 {
+#if CONFIG_FSL_DCU_FB
 	return fsl_dcu_fixedfb_setup(blob);
+#endif /* CONFIG_FSL_DCU_FB */
+
+	return 0;
 }
 #endif
 
