@@ -491,6 +491,7 @@ int board_late_init(void)
 			== SRC_SBMR2_BMOD_SERIAL) {
 		printf("Serial Downloader recovery mode, disabled autoboot\n");
 		setenv("bootdelay", "-1");
+		setenv("bootretry", "-1");
 	}
 
 	if (ping_mx4_pic())
