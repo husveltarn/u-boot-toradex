@@ -201,6 +201,8 @@
 		"ubi.fm_autoconvert=1\0" \
 	UBI_BOOTCMD
 
+#define MX4_PRODUCT_TYPE "v61"
+
 /* Miscellaneous configurable options */
 #define CONFIG_AUTOBOOT_KEYED
 #define CONFIG_AUTOBOOT_PROMPT		\
