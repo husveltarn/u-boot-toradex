@@ -128,6 +128,14 @@
 #define CONFIG_CMD_CACHE
 
 /* Miscellaneous commands */
+#define CONFIG_AUTOBOOT_KEYED
+#define CONFIG_AUTOBOOT_PROMPT		\
+	"\nMX4 - booting... stop with ENTER\n"
+#define CONFIG_AUTOBOOT_DELAY_STR	"\r"
+#define CONFIG_AUTOBOOT_DELAY_STR2	"\n"
+#define CONFIG_RESET_TO_RETRY
+#define CONFIG_BOOT_RETRY_TIME	30
+
 #define CONFIG_CMD_SETEXPR
 #define CONFIG_FAT_WRITE
 
