@@ -103,7 +103,7 @@
 				"1m(cfgblock)ro,"		\
 				"1m(u-boot-env2),"		\
 				"8m(kernel),"		\
-				"128m(config),"		\
+				"256m(config),"		\
 				"-(ubi)"
 
 #undef CONFIG_CMD_IMLS
