@@ -72,6 +72,10 @@
 #define CONFIG_CMD_NET
 #define CONFIG_CMD_DHCP
 
+#define CONFIG_IP_DEFRAG
+#define CONFIG_TFTP_BLOCKSIZE		1536
+#define CONFIG_TFTP_TSIZE
+
 /* LCD support */
 #define CONFIG_LCD
 #define CONFIG_PWM_TEGRA
