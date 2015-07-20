@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place, Suite 330, Boston,
  * MA 02111-1307 USA
  */
-
 #include <common.h>
 #include <dm.h>
 #include <asm/io.h>
@@ -36,6 +35,11 @@ DECLARE_GLOBAL_DATA_PTR;
 #define SLINK_CMD_ENB			(1 << 31)
 #define SLINK_CMD_GO			(1 << 30)
 #define SLINK_CMD_M_S			(1 << 28)
+#define SLINK_CMD_IDLE_SCLK_DRIVE_LOW		(0 << 24)
+#define SLINK_CMD_IDLE_SCLK_DRIVE_HIGH		(1 << 24)
+#define SLINK_CMD_IDLE_SCLK_PULL_LOW		(2 << 24)
+#define SLINK_CMD_IDLE_SCLK_PULL_HIGH		(3 << 24)
+#define SLINK_CMD_IDLE_SCLK_MASK			(3 << 24)
 #define SLINK_CMD_CK_SDA		(1 << 21)
 #define SLINK_CMD_CS_POL		(1 << 13)
 #define SLINK_CMD_CS_VAL		(1 << 12)
@@ -145,6 +149,7 @@ static int tegra30_spi_claim_bus(struct udevice *bus)
 {
 	struct tegra30_spi_priv *priv = dev_get_priv(bus);
 	struct spi_regs *regs = priv->regs;
+	unsigned int mode = priv->mode;
 	u32 reg;
 
 	/* Change SPI clock to correct frequency, PLLP_OUT0 source */
@@ -160,6 +165,17 @@ static int tegra30_spi_claim_bus(struct udevice *bus)
 	/* Set master mode and sw controlled CS */
 	reg = readl(&regs->command);
 	reg |= SLINK_CMD_M_S | SLINK_CMD_CS_SOFT;
+
+	/* Set CPOL and CPHA */
+	reg &= ~SLINK_CMD_IDLE_SCLK_MASK & ~SLINK_CMD_CK_SDA;
+	if (mode & SPI_CPHA)
+		reg |= SLINK_CMD_CK_SDA;
+
+	if (mode & SPI_CPOL)
+		reg |= SLINK_CMD_IDLE_SCLK_DRIVE_HIGH;
+	else
+		reg |= SLINK_CMD_IDLE_SCLK_DRIVE_LOW;
+
 	writel(reg, &regs->command);
 	debug("%s: COMMAND = %08x\n", __func__, readl(&regs->command));
 
