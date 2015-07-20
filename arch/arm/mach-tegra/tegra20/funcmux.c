@@ -30,7 +30,6 @@ static const struct pmux_pingrp_config disp1_default[] = {
 	PINMUX(LSPI,  DISPA,      NORMAL,    NORMAL),
 	PINMUX(LVP1,  DISPA,      NORMAL,    NORMAL),
 	PINMUX(LVS,   DISPA,      NORMAL,    NORMAL),
-	PINMUX(SLXD,  SPDIF,      NORMAL,    NORMAL),
 };
 
 
