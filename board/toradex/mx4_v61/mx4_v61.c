@@ -22,10 +22,10 @@
 #include <miiphy.h>
 #include <netdev.h>
 #include <i2c.h>
-#include <spi.h>
 #include <asm/gpio.h>
 
 #include "../common/configblock.h"
+#include "../mx4_common/mx4_common.h"
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -43,48 +43,6 @@ DECLARE_GLOBAL_DATA_PTR;
 static const iomux_v3_cfg_t usb_pads[] = {
 	VF610_PAD_PTD4__GPIO_83,
 };
-
-#define MX4_MAX_SPI_BYTES 8
-static int ping_mx4_pic(void)
-{
-	struct spi_slave *slave;
-
-	unsigned int bus = 0, cs = 0, mode = SPI_MODE_1;
-	int	bitlen = 56;
-	int rcode = 0;
-	char *empty = 0;
-
-	uchar dout[] = { 0x02, 0x95, 0x00, 0x00, 0x00, 0x00, 0x00 };
-	uchar din[MX4_MAX_SPI_BYTES];
-
-	slave = spi_setup_slave(bus, cs, 1000000, mode);
-	if (!slave) {
-		printf("Invalid device %d:%d\n", bus, cs);
-		return 1;
-	}
-
-	spi_claim_bus(slave);
-	if(spi_xfer(slave, bitlen, dout, din, SPI_XFER_BEGIN | SPI_XFER_END) != 0) {
-		printf("Error during SPI transaction\n");
-		rcode = 1;
-	}
-	spi_release_bus(slave);
-
-	udelay(1000*10);
-
-	bitlen = 24;
-	/* Clock out response so that we are synced */
-	spi_claim_bus(slave);
-	if(spi_xfer(slave, bitlen, empty, din, SPI_XFER_BEGIN | SPI_XFER_END) != 0) {
-		printf("Error during SPI transaction\n");
-		rcode = 1;
-	}
-
-	spi_release_bus(slave);
-	spi_free_slave(slave);
-
-	return rcode;
-}
 
 int dram_init(void)
 {
