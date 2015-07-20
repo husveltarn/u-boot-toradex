@@ -196,6 +196,24 @@ static int mx4_spi_write(uchar type, uchar cmd, uint32_t *data)
 	unsigned int din_bitlen = 0;
 	int rcode = 0;
 
+#ifdef CONFIG_DM_SPI
+	char name[30], *str;
+	struct udevice *dev;
+
+	snprintf(name, sizeof(name), "generic_%d:%d", bus, cs);
+	str = strdup(name);
+	rcode = spi_get_bus_and_cs(bus, cs, 1000000, mode, "spi_generic_drv",
+				 str, &dev, &slave);
+	if (rcode)
+		return rcode;
+#else
+	slave = spi_setup_slave(bus, cs, 1000000, mode);
+	if (!slave) {
+		printf("Invalid device %d:%d\n", bus, cs);
+		return -EINVAL;
+	}
+#endif
+
 	if (!data)
 		return 1;
 
@@ -215,13 +233,6 @@ static int mx4_spi_write(uchar type, uchar cmd, uint32_t *data)
 	} else if(type == MX4_CMD_READ) {
 		dout_bitlen = 16;
 		din_bitlen = 64;
-	}
-
-
-	slave = spi_setup_slave(bus, cs, 12000000, mode);
-	if (!slave) {
-		printf("Invalid device %d:%d\n", bus, cs);
-		return 1;
 	}
 
 	printf(" >> ");
@@ -265,7 +276,9 @@ static int mx4_spi_write(uchar type, uchar cmd, uint32_t *data)
 	}
 
 	spi_release_bus(slave);
+#ifndef CONFIG_DM_SPI
 	spi_free_slave(slave);
+#endif
 
 	return rcode;
 }

@@ -1,0 +1,7 @@
+MX4_T20
+M:	Mirza Krak <mirza.krak@hostmobility.com>
+S:	Maintained
+F:	board/toradex/mx4_t20/
+F:	include/configs/mx4_t20.h
+F:	configs/mx4_t20_defconfig
+F:	arch/arm/dts/tegra20-colibri.dtb
