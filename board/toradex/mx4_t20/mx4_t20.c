@@ -127,6 +127,21 @@ int checkboard_fallback(void)
 	return 0;
 }
 
+#ifdef CONFIG_TEGRA_SPI
+void pin_mux_spi(void)
+{
+	pinmux_set_func(PMUX_PINGRP_SLXA, PMUX_FUNC_SPI4);
+	pinmux_set_func(PMUX_PINGRP_SLXC, PMUX_FUNC_SPI4);
+	pinmux_set_func(PMUX_PINGRP_SLXD, PMUX_FUNC_SPI4);
+	pinmux_set_func(PMUX_PINGRP_SLXK, PMUX_FUNC_SPI4);
+
+	pinmux_tristate_disable(PMUX_PINGRP_SLXA);
+	pinmux_tristate_disable(PMUX_PINGRP_SLXC);
+	pinmux_tristate_disable(PMUX_PINGRP_SLXD);
+	pinmux_tristate_disable(PMUX_PINGRP_SLXK);
+}
+#endif
+
 #ifdef CONFIG_TEGRA_MMC
 /*
  * Routine: pin_mux_mmc
