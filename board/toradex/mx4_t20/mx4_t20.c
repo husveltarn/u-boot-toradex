@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2011-2015 Toradex, Inc.
+ * Copyright (c) 2011-2015 Host Mobility AB.
  *
  * SPDX-License-Identifier:	GPL-2.0+
  */
@@ -16,6 +16,7 @@
 #include <nand.h>
 
 #include "../common/configblock.h"
+#include "../mx4_common/mx4_common.h"
 
 DECLARE_GLOBAL_DATA_PTR;
 
@@ -114,6 +115,9 @@ int arch_misc_init(void)
 		printf("USB recovery mode, disabled autoboot\n");
 		setenv("bootdelay", "-1");
 	}
+
+	if (ping_mx4_pic())
+		printf("Failed to ping mx4 pic\n");
 
 	return 0;
 }
