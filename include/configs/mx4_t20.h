@@ -14,6 +14,8 @@
 #undef CONFIG_SYS_DCACHE_OFF		/* breaks L4T kernel boot */
 #define CONFIG_ARCH_MISC_INIT
 
+#define MX4_PRODUCT_TYPE "t20"
+
 /* High-level configuration options */
 #define V_PROMPT			"MX-4 T20 # "
 #define CONFIG_CUSTOM_BOARDINFO		/* not from device-tree model node */
