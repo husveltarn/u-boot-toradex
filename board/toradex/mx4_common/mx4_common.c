@@ -4,6 +4,7 @@
  * SPDX-License-Identifier:	GPL-2.0+
  */
 #include <common.h>
+#include <errno.h>
 #include <spi.h>
 
 #define MX4_MAX_SPI_BYTES 8

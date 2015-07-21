@@ -16,6 +16,7 @@
  */
 
 #include <common.h>
+#include <errno.h>
 #include <spi.h>
 
 #define MX4_REG_BIT(bit)                (1 << (bit))
