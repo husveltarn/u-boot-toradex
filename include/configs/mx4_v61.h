@@ -188,7 +188,7 @@
 	"ramargs=root=/dev/ram0 rw\0" \
 	"kernel_addr_r=0x82000000\0" \
 	"fdt_addr_r=0x84000000\0" \
-	"defargs=no_console_suspend=1 quiet\0" \
+	"defargs=quiet\0" \
 	"console=ttyLP0\0" \
 	"setup=setenv setupargs " \
 		"fec_mac=${ethaddr} console=tty1 console=${console}" \
