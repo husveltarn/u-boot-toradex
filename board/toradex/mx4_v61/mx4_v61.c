@@ -137,16 +137,6 @@ static void setup_iomux_enet(void)
 	imx_iomux_v3_setup_multiple_pads(enet0_pads, ARRAY_SIZE(enet0_pads));
 }
 
-static void setup_iomux_i2c(void)
-{
-	static const iomux_v3_cfg_t i2c0_pads[] = {
-		VF610_PAD_PTB14__I2C0_SCL,
-		VF610_PAD_PTB15__I2C0_SDA,
-	};
-
-	imx_iomux_v3_setup_multiple_pads(i2c0_pads, ARRAY_SIZE(i2c0_pads));
-}
-
 #ifdef CONFIG_NAND_VF610_NFC
 static void setup_iomux_nfc(void)
 {
@@ -397,7 +387,6 @@ int board_early_init_f(void)
 
 	setup_iomux_uart();
 	setup_iomux_enet();
-	setup_iomux_i2c();
 	setup_iomux_dspi();
 #ifdef CONFIG_NAND_VF610_NFC
 	setup_iomux_nfc();
