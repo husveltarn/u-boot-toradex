@@ -8,6 +8,7 @@
  * SPDX-License-Identifier:	GPL-2.0+
  */
 
+#include <compiler.h>
 #include <errno.h>
 #include <env_flags.h>
 #include <fcntl.h>
