@@ -47,11 +47,12 @@
 #define CONFIG_TEGRA_MMC
 #define CONFIG_CMD_MMC
 
-/* Environment in eMMC, at the end of 2nd "boot sector" */
+/* Environment in eMMC, before config block at the end of 1st "boot sector" */
 #define CONFIG_ENV_IS_IN_MMC
-#define CONFIG_ENV_OFFSET		(-CONFIG_ENV_SIZE)
+#define CONFIG_ENV_OFFSET		(-CONFIG_ENV_SIZE + \
+					 CONFIG_TRDX_CFG_BLOCK_OFFSET)
 #define CONFIG_SYS_MMC_ENV_DEV		0
-#define CONFIG_SYS_MMC_ENV_PART		2
+#define CONFIG_SYS_MMC_ENV_PART		1
 
 /* USB client support */
 #define CONFIG_G_DNL_MANUFACTURER	"Toradex"
@@ -61,7 +62,7 @@
 /* USB host support */
 #define CONFIG_USB_EHCI
 #define CONFIG_USB_EHCI_TEGRA
-#define CONFIG_USB_MAX_CONTROLLER_COUNT		3
+#define CONFIG_USB_MAX_CONTROLLER_COUNT	3
 #define CONFIG_USB_STORAGE
 #define CONFIG_CMD_USB
 
@@ -72,6 +73,19 @@
 /* General networking support */
 #define CONFIG_CMD_NET
 #define CONFIG_CMD_DHCP
+#define CONFIG_IP_DEFRAG
+#define CONFIG_TFTP_BLOCKSIZE		16384
+#define CONFIG_TFTP_TSIZE
+
+/* LCD support */
+#define CONFIG_LCD
+#define CONFIG_PWM_TEGRA
+#define CONFIG_VIDEO_TEGRA
+#define LCD_BPP				LCD_COLOR16
+#define CONFIG_SYS_WHITE_ON_BLACK
+#define CONFIG_CONSOLE_SCROLL_LINES	10
+#define CONFIG_CMD_BMP
+#define CONFIG_LCD_LOGO
 
 /* Miscellaneous commands */
 #define CONFIG_CMD_SETEXPR
@@ -79,6 +93,7 @@
 
 #undef CONFIG_BOOTDELAY
 #define CONFIG_BOOTDELAY	1
+#define CONFIG_ZERO_BOOTDELAY_CHECK
 #undef CONFIG_IPADDR
 #define CONFIG_IPADDR		192.168.10.2
 #define CONFIG_NETMASK		255.255.255.0
@@ -149,7 +164,9 @@
 	"fdt_board=eval-v3\0" \
 	NFS_BOOTCMD \
 	SD_BOOTCMD \
-	"setethupdate=usb start && tftpboot ${kernel_addr_r} flash_eth.img\0" \
+	"setethupdate=if env exists ethaddr; then; else setenv ethaddr " \
+		"00:14:2d:00:00:00; fi; usb start && tftpboot " \
+		"${kernel_addr_r} flash_eth.img\0" \
 	"setsdupdate=setenv interface mmc; setenv drive 1; mmc rescan; load " \
 		"${interface} ${drive}:1 ${kernel_addr_r} flash_blk.img\0" \
 	"setup=setenv setupargs asix_mac=${ethaddr} " \
@@ -162,7 +179,7 @@
 	"setupdate=run setsdupdate || run setusbupdate || run setethupdate;" \
 		" source ${kernel_addr_r}\0" \
 	USB_BOOTCMD \
-	"vidargs=video=tegrafb0:640x480-16@60 fbcon=map:1\0"
+	"vidargs=video=tegrafb0:640x480-16@60\0"
 
 /* Increase console I/O buffer size */
 #undef CONFIG_SYS_CBSIZE

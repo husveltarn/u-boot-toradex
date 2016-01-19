@@ -12,13 +12,13 @@
 #include <asm/io.h>
 #include <asm/arch/clock.h>
 #ifdef CONFIG_LCD
-#include <asm/arch/display.h>
+#include <asm/arch-tegra/display.h>
 #endif
 #include <asm/arch/funcmux.h>
 #include <asm/arch/pinmux.h>
 #include <asm/arch/pmu.h>
 #ifdef CONFIG_PWM_TEGRA
-#include <asm/arch/pwm.h>
+#include <asm/arch-tegra/pwm.h>
 #endif
 #include <asm/arch/tegra.h>
 #include <asm/arch-tegra/ap.h>

@@ -105,7 +105,7 @@
 		hsync-active-high;
 		vsync-active-high;
 		nvidia,bits-per-pixel = <16>;
-		nvidia,pwm = <&pwm 2 0>;
+		nvidia,pwm = <&pwm 0 0>;
 		nvidia,backlight-enable-gpios = <&gpio TEGRA_GPIO(T, 4) GPIO_ACTIVE_HIGH>;
 		nvidia,panel-timings = <0 0 0 0>;
 	};

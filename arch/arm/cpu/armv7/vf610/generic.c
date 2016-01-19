@@ -10,6 +10,7 @@
 #include <asm/arch/clock.h>
 #include <asm/arch/crm_regs.h>
 #include <asm/imx-common/boot_mode.h>
+#include <asm/pl310.h>
 #include <netdev.h>
 #ifdef CONFIG_FSL_ESDHC
 #include <fsl_esdhc.h>
@@ -346,7 +347,7 @@ int arch_misc_init(void)
 {
 	char soc[6];
 
-	strcat(soc, "vf");
+	strcpy(soc, "vf");
 	strcat(soc, soc_type);
 	setenv("soc", soc);
 
@@ -395,3 +396,39 @@ void enable_caches(void)
 	mmu_set_region_dcache_behaviour(IRAM_BASE_ADDR, IRAM_SIZE, option);
 }
 #endif
+
+#if !defined(CONFIG_SYS_L2CACHE_OFF) && defined(CONFIG_SYS_L2_PL310)
+#define IOMUXC_GPR11_L2CACHE_AS_OCRAM 0x00000002
+void v7_outer_cache_enable(void)
+{
+	struct pl310_regs *const pl310 = (struct pl310_regs *)CA5_L2C_BASE_ADDR;
+	unsigned int val;
+
+	/* Must disable the L2 before changing the latency parameters */
+	clrbits_le32(&pl310->pl310_ctrl, L2X0_CTRL_EN);
+
+	writel(0x122, &pl310->pl310_tag_latency_ctrl);
+	writel(0x011, &pl310->pl310_data_latency_ctrl);
+
+	val = readl(&pl310->pl310_prefetch_ctrl);
+
+	/* Turn on the L2 I/D prefetch */
+	val |= 0x30000000;
+
+	writel(val, &pl310->pl310_prefetch_ctrl);
+
+	val = readl(&pl310->pl310_power_ctrl);
+	val |= L2X0_DYNAMIC_CLK_GATING_EN;
+	val |= L2X0_STNDBY_MODE_EN;
+	writel(val, &pl310->pl310_power_ctrl);
+
+	setbits_le32(&pl310->pl310_ctrl, L2X0_CTRL_EN);
+}
+
+void v7_outer_cache_disable(void)
+{
+	struct pl310_regs *const pl310 = (struct pl310_regs *)CA5_L2C_BASE_ADDR;
+
+	clrbits_le32(&pl310->pl310_ctrl, L2X0_CTRL_EN);
+}
+#endif /* !CONFIG_SYS_L2CACHE_OFF */

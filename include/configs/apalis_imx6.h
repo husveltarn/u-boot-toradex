@@ -21,7 +21,7 @@
 
 #define CONFIG_SYS_GENERIC_BOARD
 
-/* Define CONFIG_APALIS_IMX6_V1_0 to use the UARTS in DCE mode unconditionally.
+/* Define CONFIG_APALIS_IMX6_V1_0 to use the UARTs in DCE mode unconditionally.
    Otherwise U-Boot uses the Configblock to fall back to DCE on V1.0 HW */
 /* #define CONFIG_APALIS_IMX6_V1_0 */
 
@@ -47,7 +47,7 @@
 #define CONFIG_MXC_UART
 #define CONFIG_MXC_UART_BASE		UART1_BASE
 
-/* Make the HW version stuff available in u-boot env */
+/* Make the HW version stuff available in U-Boot env */
 #define CONFIG_VERSION_VARIABLE		/* ver environment variable */
 #define CONFIG_ENV_VARS_UBOOT_CONFIG
 #define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
@@ -70,6 +70,7 @@
 #define CONFIG_SYS_FSL_ESDHC_ADDR	0
 #define CONFIG_SYS_FSL_USDHC_NUM	3
 
+#define CONFIG_SUPPORT_EMMC_BOOT	/* eMMC specific */
 #define CONFIG_MMC
 #define CONFIG_CMD_MMC
 #define CONFIG_GENERIC_MMC
@@ -189,6 +190,7 @@
 
 #undef CONFIG_BOOTDELAY
 #define CONFIG_BOOTDELAY		1
+#define CONFIG_ZERO_BOOTDELAY_CHECK
 #undef CONFIG_IPADDR
 #define CONFIG_IPADDR			192.168.10.2
 #define CONFIG_NETMASK			255.255.255.0
@@ -253,7 +255,7 @@
 		"rootwait\0" \
 	"sdboot=run setup; " \
 		"setenv bootargs ${defargs} ${sdargs} ${setupargs} " \
-		"${vidargs}; echo Booting from SD card in 8bit slot...; " \
+		"${vidargs}; echo Booting from SD card in 8-bit slot...; " \
 		"run sddtbload; load mmc 1:1 ${kernel_addr_r} " \
 		"${boot_file} && bootm ${kernel_addr_r} ${dtbparam}\0" \
 	"sddtbload=setenv dtbparam; load mmc 1:1 ${fdt_addr_r} " \
@@ -271,9 +273,9 @@
 
 #ifndef CONFIG_APALIS_IMX6_V1_0
 #define FDT_FILE "imx6q-apalis-eval.dtb"
-#define FDT_FILE_V1_0 "imx6q-apalis-eval_v1_0.dtb"
+#define FDT_FILE_V1_0 "imx6q-apalis_v1_0-eval.dtb"
 #else
-#define FDT_FILE "imx6q-apalis-eval_v1_0.dtb"
+#define FDT_FILE "imx6q-apalis_v1_0-eval.dtb"
 #endif
 #define CONFIG_EXTRA_ENV_SETTINGS \
 	"bootcmd=run emmcboot ; echo ; echo emmcboot failed ; " \
@@ -289,7 +291,9 @@
 	MEM_LAYOUT_ENV_SETTINGS \
 	NFS_BOOTCMD \
 	SD_BOOTCMD \
-	"setethupdate=tftpboot ${kernel_addr_r} flash_eth.img\0" \
+	"setethupdate=if env exists ethaddr; then; else setenv ethaddr " \
+		"00:14:2d:00:00:00; fi; tftpboot ${kernel_addr_r} " \
+		"flash_eth.img\0" \
 	"setsdupdate=setenv interface mmc; setenv drive 1; mmc rescan; " \
 		"load ${interface} ${drive}:1 ${kernel_addr_r} flash_blk.img " \
 		"|| setenv drive 2; load ${interface} ${drive}:1 " \
@@ -348,8 +352,11 @@
 #define CONFIG_ENV_IS_IN_MMC
 
 #if defined(CONFIG_ENV_IS_IN_MMC)
-#define CONFIG_ENV_OFFSET		(512 * 1024)
+/* Environment in eMMC, before config block at the end of 1st "boot sector" */
+#define CONFIG_ENV_OFFSET		(-CONFIG_ENV_SIZE + \
+					 CONFIG_TRDX_CFG_BLOCK_OFFSET)
 #define CONFIG_SYS_MMC_ENV_DEV		0
+#define CONFIG_SYS_MMC_ENV_PART		1
 #endif
 
 #define CONFIG_OF_LIBFDT
@@ -364,5 +371,7 @@
 #define CONFIG_CMD_BOOTZ
 #define CONFIG_SUPPORT_RAW_INITRD
 #define CONFIG_CMD_FS_GENERIC
+
+#define CONFIG_CRC32_VERIFY
 
 #endif	/* __CONFIG_H */

@@ -25,10 +25,11 @@ config TRDX_CFG_BLOCK_DEV
 	default "0"
 
 config TRDX_CFG_BLOCK_PART
-	default "0"
+	default "1"
 
+# Toradex Configblock in eMMC, at the end of 1st "boot sector"
 config TRDX_CFG_BLOCK_OFFSET
-	default "655360"
+	default "-512"
 
 menuconfig TRDX_CMD_IMX_MFGR
 	bool "Enable factory testing commands for Toradex iMX 6 modules"

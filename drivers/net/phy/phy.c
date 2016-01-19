@@ -696,6 +696,12 @@ int phy_reset(struct phy_device *phydev)
 
 	reg |= BMCR_RESET;
 
+#ifdef CONFIG_MX6
+	/* at least on a Micrel KSZ8041 the following bits do not get
+	 * cleared by a SW reset, but they should */
+	reg &= ~(BMCR_PDOWN|BMCR_LOOPBACK|BMCR_CTST);
+#endif
+
 	if (phy_write(phydev, devad, MII_BMCR, reg) < 0) {
 		debug("PHY reset failed\n");
 		return -1;

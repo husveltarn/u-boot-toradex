@@ -14,6 +14,8 @@
 #undef CONFIG_SYS_DCACHE_OFF		/* breaks L4T kernel boot */
 #define CONFIG_ARCH_MISC_INIT
 
+#define CONFIG_TEGRA_EARLY_TPS6586X
+
 /* High-level configuration options */
 #define V_PROMPT			"Colibri T20 # "
 #define CONFIG_CUSTOM_BOARDINFO		/* not from device-tree model node */
@@ -60,7 +62,7 @@
 #define CONFIG_USB_EHCI_TEGRA
 #define CONFIG_USB_ULPI
 #define CONFIG_USB_ULPI_VIEWPORT
-#define CONFIG_USB_MAX_CONTROLLER_COUNT 3
+#define CONFIG_USB_MAX_CONTROLLER_COUNT	3
 #define CONFIG_USB_STORAGE
 #define CONFIG_CMD_USB
 
@@ -71,6 +73,9 @@
 /* General networking support */
 #define CONFIG_CMD_NET
 #define CONFIG_CMD_DHCP
+#define CONFIG_IP_DEFRAG
+#define CONFIG_TFTP_BLOCKSIZE		1536
+#define CONFIG_TFTP_TSIZE
 
 /* LCD support */
 #define CONFIG_LCD
@@ -125,6 +130,7 @@
 
 #undef CONFIG_BOOTDELAY
 #define CONFIG_BOOTDELAY	1
+#define CONFIG_ZERO_BOOTDELAY_CHECK
 #undef CONFIG_IPADDR
 #define CONFIG_IPADDR		192.168.10.2
 #define CONFIG_NETMASK		255.255.255.0
@@ -193,7 +199,9 @@
 	"mtdparts=" MTDPARTS_DEFAULT "\0" \
 	NFS_BOOTCMD \
 	SD_BOOTCMD \
-	"setethupdate=usb start && tftpboot ${kernel_addr_r} flash_eth.img\0" \
+	"setethupdate=if env exists ethaddr; then; else setenv ethaddr " \
+		"00:14:2d:00:00:00; fi; usb start && tftpboot " \
+		"${kernel_addr_r} flash_eth.img\0" \
 	"setsdupdate=setenv interface mmc; setenv drive 0; mmc rescan; " \
 		"load ${interface} ${drive}:1 ${kernel_addr_r} " \
 		"flash_blk.img\0" \

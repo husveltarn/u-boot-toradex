@@ -32,7 +32,7 @@
 #include <i2c.h>
 
 #include "../common/configblock.h"
-#ifdef TRDX_CMD_IMX_MFGR
+#ifdef CONFIG_TRDX_CMD_IMX_MFGR
 #include "pf0100.h"
 #endif
 
@@ -113,7 +113,7 @@ struct i2c_pads_info i2c_pad_info1 = {
 	}
 };
 
-/* Apalis local, PMIC, SGTL5000, STMPE811*/
+/* Apalis local, PMIC, SGTL5000, STMPE811 */
 struct i2c_pads_info i2c_pad_info_loc = {
 	.scl = {
 		.i2c_mode = MX6_PAD_KEY_COL3__I2C2_SCL | PC,
@@ -203,7 +203,7 @@ int mx6_rgmii_rework(struct phy_device *phydev)
 	/*
 	 * Bug: Apparently Apalis iMX6 does not works with Gigabit switches...
 	 * Limiting speed to 10/100Mbps, and setting master mode, seems to
-	 * be the only way to have a successfull PHY auto negotiation.
+	 * be the only way to have a successful PHY auto negotiation.
 	 * How to fix: Understand why Linux kernel do not have this issue.
 	 */
 	phy_write(phydev, MDIO_DEVAD_NONE, MII_CTRL1000, 0x1c00);
@@ -263,7 +263,7 @@ static int reset_enet_phy (struct mii_dev *bus)
 	return 0;
 }
 
-/* mux the Apalis GPIO pins to gpio, so they can be used from the U-Boot commandline */
+/* mux the Apalis GPIO pins to GPIO, so they can be used from the U-Boot commandline */
 iomux_v3_cfg_t const gpio_pads[] = {
 	MX6_PAD_NANDF_D4__GPIO2_IO04	| MUX_PAD_CTRL(WEAK_PULLUP),	/* Apalis GPIO1 */
 	MX6_PAD_NANDF_D5__GPIO2_IO05	| MUX_PAD_CTRL(WEAK_PULLUP),	/* Apalis GPIO2 */
@@ -296,7 +296,8 @@ iomux_v3_cfg_t const usb_pads[] = {
 #	define GPIO_USBO_EN IMX_GPIO_NR(3, 22)
 };
 
-/* if UARTs are used in DTE mode, switch the mode on all UARTs before
+/*
+ * If UARTs are used in DTE mode, switch the mode on all UARTs before
  * any pinmuxing connects a (DCE) output to a transceiver output.
  */
 #define UFCR		0x90	/* FIFO Control Register */
@@ -450,14 +451,14 @@ int board_eth_init(bd_t *bis)
 	if (!bus)
 		return 0;
 	bus->reset = reset_enet_phy;
-	/* scan phy 4,5,6,7 */
+	/* scan PHY 4,5,6,7 */
 	phydev = phy_find_by_mask(bus, (0xf << 4), PHY_INTERFACE_MODE_RGMII);
 	if (!phydev) {
 		free(bus);
-		puts("no phy found\n");
+		puts("no PHY found\n");
 		return 0;
 	}
-	printf("using phy at %d\n", phydev->addr);
+	printf("using PHY at %d\n", phydev->addr);
 	ret  = fec_probe(bis, -1, base, bus, phydev);
 	if (ret) {
 		printf("FEC MXC: %s:failed\n", __func__);
@@ -480,7 +481,7 @@ static iomux_v3_cfg_t const backlight_pads[] = {
 	/* PWM4 pin */
 	MX6_PAD_SD4_DAT2__GPIO2_IO10 | MUX_PAD_CTRL(NO_PAD_CTRL),
 #define RGB_BACKLIGHTPWM_GP IMX_GPIO_NR(2, 10)
-	/* buffer output enable 0: buffer enabled*/
+	/* buffer output enable 0: buffer enabled */
 	MX6_PAD_EIM_A25__GPIO5_IO02 | MUX_PAD_CTRL(WEAK_PULLUP),
 #define RGB_BACKLIGHTPWM_OE IMX_GPIO_NR(5, 2)
 	/* PSAVE# integrated VDAC */
@@ -489,8 +490,10 @@ static iomux_v3_cfg_t const backlight_pads[] = {
 };
 
 static iomux_v3_cfg_t const pwr_intb_pads[] = {
-	/* the bootrom sets the iomux to vselect, potentially connecting
-	 * two outputs. Set this back to GPIO */
+	/*
+	 * the bootrom sets the iomux to vselect, potentially connecting
+	 * two outputs. Set this back to GPIO
+	 */
 	MX6_PAD_GPIO_18__GPIO7_IO13 | MUX_PAD_CTRL(NO_PAD_CTRL)
 };
 
@@ -527,7 +530,7 @@ static iomux_v3_cfg_t const rgb_pads[] = {
 
 static iomux_v3_cfg_t const vga_pads[] = {
 #ifdef FOR_DL_SOLO
-	/* Dualite/Solo doesn't have IPU2 */
+	/* DualLite/Solo doesn't have IPU2 */
 	MX6_PAD_DI0_DISP_CLK__IPU1_DI0_DISP_CLK,
 	MX6_PAD_DI0_PIN15__IPU1_DI0_PIN15,
 	MX6_PAD_DI0_PIN2__IPU1_DI0_PIN02,
@@ -774,7 +777,7 @@ static void setup_display(void)
 	       <<IOMUXC_GPR3_LVDS0_MUX_CTL_OFFSET);
 	writel(reg, &iomux->gpr[3]);
 
-	/* backlights unconditionally on for now */
+	/* backlight unconditionally on for now */
 	imx_iomux_v3_setup_multiple_pads(backlight_pads,
 					 ARRAY_SIZE(backlight_pads));
 	/* use 0 for EDT 7", use 1 for LG fullHD panel */
@@ -818,7 +821,7 @@ int board_init(void)
 	setup_i2c(1, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info_loc);
 	setup_i2c(2, CONFIG_SYS_I2C_SPEED, 0x7f, &i2c_pad_info3);
 
-#ifdef TRDX_CMD_IMX_MFGR
+#ifdef CONFIG_TRDX_CMD_IMX_MFGR
 	(void) pmic_init();
 #endif
 
@@ -876,10 +879,10 @@ int checkboard_fallback(void)
 
 #ifdef CONFIG_CMD_BMODE
 static const struct boot_mode board_boot_modes[] = {
-	/* 4 bit bus width */
+	/* 4-bit bus width */
 	{"mmc",	MAKE_CFGVAL(0x40, 0x20, 0x00, 0x00)},
 	{"sd",	MAKE_CFGVAL(0x40, 0x28, 0x00, 0x00)},
-	{NULL,		0},
+	{NULL,	0},
 };
 #endif
 

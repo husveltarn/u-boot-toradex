@@ -153,6 +153,9 @@ struct lmb;
 #define IH_OS_OSE		22	/* OSE		*/
 #define IH_OS_PLAN9		23	/* Plan 9	*/
 #define IH_OS_OPENRTOS		24	/* OpenRTOS	*/
+#define IH_OS_ECOS		25	/* eCos		*/
+#define IH_OS_MQX		26	/* MQX		*/
+#define IH_OS_BAREMETAL		27	/* Bare-metal	*/
 
 /*
  * CPU Architecture Codes (supported by Linux)

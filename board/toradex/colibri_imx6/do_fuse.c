@@ -11,8 +11,7 @@
 #include <common.h>
 #include <fuse.h>
 
-static unsigned mfgr_fuse(void);
-unsigned mfgr_fuse(void)
+static int mfgr_fuse(void)
 {
 	unsigned val, val6;
 
@@ -27,24 +26,26 @@ unsigned mfgr_fuse(void)
 	if(val6 & 0x10)
 	{
 		puts("BT_FUSE_SEL already fused, will do nothing\n");
-		return 1;
+		return CMD_RET_FAILURE;
 	}
 	/* boot cfg */
 	fuse_prog(0, 5, 0x00005062);
 	/* BT_FUSE_SEL */
 	fuse_prog(0, 6, 0x00000010);
-	return 0;
+	return CMD_RET_SUCCESS;
 }
 
 int do_mfgr_fuse(cmd_tbl_t *cmdtp, int flag, int argc,
 		char * const argv[])
 {
+	int ret;
 	puts("Fusing...\n");
-	if(!mfgr_fuse())
+	ret = mfgr_fuse();
+	if (ret == CMD_RET_SUCCESS)
 		puts("done.\n");
 	else
 		puts("failed.\n");
-	return 0;
+	return ret;
 }
 
 U_BOOT_CMD(

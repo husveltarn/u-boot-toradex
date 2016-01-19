@@ -10,7 +10,7 @@
 #include <fdtdec.h>
 #include <asm/io.h>
 #include <asm/arch/clock.h>
-#include <asm/arch/pwm.h>
+#include <asm/arch-tegra/pwm.h>
 
 struct pwm_info {
 	struct pwm_ctlr *pwm;		/* Registers for our pwm controller */

@@ -17,11 +17,14 @@
 #include <asm/arch/clock.h>
 #include <asm/imx-common/boot_mode.h>
 #include <mmc.h>
+#include <mtd_node.h>
+#include <fdt_support.h>
 #include <fsl_esdhc.h>
 #include <fsl_dcu_fb.h>
 #include <miiphy.h>
 #include <netdev.h>
 #include <i2c.h>
+#include <jffs2/load_kernel.h>
 #include <asm/gpio.h>
 
 #include "../common/configblock.h"
@@ -100,6 +103,10 @@ static void setup_iomux_uart(void)
 		NEW_PAD_CTRL(VF610_PAD_PTB5__UART1_RX, UART_PAD_CTRL),
 		NEW_PAD_CTRL(VF610_PAD_PTB10__UART0_TX, UART_PAD_CTRL),
 		NEW_PAD_CTRL(VF610_PAD_PTB11__UART0_RX, UART_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTD0__UART2_TX, UART_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTD1__UART2_RX, UART_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTD2__UART2_RTS, UART_PAD_CTRL),
+		NEW_PAD_CTRL(VF610_PAD_PTD3__UART2_CTS, UART_PAD_CTRL),
 	};
 
 	imx_iomux_v3_setup_multiple_pads(uart_pads, ARRAY_SIZE(uart_pads));
@@ -154,6 +161,20 @@ static void setup_iomux_nfc(void)
 	};
 
 	imx_iomux_v3_setup_multiple_pads(nfc_pads, ARRAY_SIZE(nfc_pads));
+}
+#endif
+
+#ifdef CONFIG_FSL_DSPI
+static void setup_iomux_dspi(void)
+{
+	static const iomux_v3_cfg_t dspi1_pads[] = {
+		VF610_PAD_PTD5__DSPI1_CS0,
+		VF610_PAD_PTD6__DSPI1_SIN,
+		VF610_PAD_PTD7__DSPI1_SOUT,
+		VF610_PAD_PTD8__DSPI1_SCK,
+	};
+
+	imx_iomux_v3_setup_multiple_pads(dspi1_pads, ARRAY_SIZE(dspi1_pads));
 }
 #endif
 
@@ -269,7 +290,10 @@ static void clock_init(void)
 	u32 pfd_clk_sel, ddr_clk_sel;
 
 	clrsetbits_le32(&ccm->ccgr0, CCM_REG_CTRL_MASK,
-			CCM_CCGR0_UART0_CTRL_MASK);
+			CCM_CCGR0_UART0_CTRL_MASK | CCM_CCGR0_UART2_CTRL_MASK);
+#ifdef CONFIG_FSL_DSPI
+	setbits_le32(&ccm->ccgr0, CCM_CCGR0_DSPI1_CTRL_MASK);
+#endif
 	clrsetbits_le32(&ccm->ccgr1, CCM_REG_CTRL_MASK,
 			CCM_CCGR1_PIT_CTRL_MASK | CCM_CCGR1_WDOGA5_CTRL_MASK |
 			CCM_CCGR1_USBC0_CTRL_MASK);
@@ -359,15 +383,6 @@ static void clock_init(void)
 #endif
 }
 
-static void mscm_init(void)
-{
-	struct mscm_ir *mscmir = (struct mscm_ir *)MSCM_IR_BASE_ADDR;
-	int i;
-
-	for (i = 0; i < MSCM_IRSPRC_NUM; i++)
-		writew(MSCM_IRSPRC_CP0_EN, &mscmir->irsprc[i]);
-}
-
 int board_phy_config(struct phy_device *phydev)
 {
 	if (phydev->drv->config)
@@ -379,7 +394,6 @@ int board_phy_config(struct phy_device *phydev)
 int board_early_init_f(void)
 {
 	clock_init();
-	mscm_init();
 
 	setup_iomux_uart();
 	setup_iomux_enet();
@@ -394,6 +408,10 @@ int board_early_init_f(void)
 
 #ifdef CONFIG_VYBRID_GPIO
 	setup_iomux_gpio();
+#endif
+
+#ifdef CONFIG_FSL_DSPI
+	setup_iomux_dspi();
 #endif
 
 	return 0;
@@ -477,7 +495,30 @@ int checkboard_fallback(void)
 #if defined(CONFIG_OF_LIBFDT) && defined(CONFIG_OF_BOARD_SETUP)
 int ft_board_setup(void *blob, bd_t *bd)
 {
-	return fsl_dcu_fixedfb_setup(blob);
+	int ret = 0;
+#ifdef CONFIG_FDT_FIXUP_PARTITIONS
+	static struct node_info nodes[] = {
+		{ "fsl,vf610-nfc",  MTD_DEV_TYPE_NAND, }, /* NAND flash */
+	};
+
+	/* Update partition nodes using info from mtdparts env var */
+	puts("   Updating MTD partitions...\n");
+	fdt_fixup_mtdparts(blob, nodes, ARRAY_SIZE(nodes));
+#endif
+#ifdef CONFIG_TRDX_CFG_BLOCK
+	/*
+	 * Colibri VFxx modules V1.2 and later have pull-up/down which allows
+	 * to put the DDR3 memory into self-refresh mode.
+	 */
+	if (trdx_hw_tag.ver_major > 1 || trdx_hw_tag.ver_minor >= 2)
+		do_fixup_by_compat(blob, "fsl,vf610-ddrmc",
+				   "fsl,has-cke-reset-pulls", NULL, 0, 1);
+#endif
+#ifdef CONFIG_FSL_DCU_FB
+	ret = fsl_dcu_fixedfb_setup(blob);
+#endif
+
+	return ret;
 }
 #endif
 

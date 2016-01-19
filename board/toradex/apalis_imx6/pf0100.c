@@ -25,9 +25,10 @@
 /* 7-bit I2C bus slave address */
 #define PFUZE100_I2C_ADDR 		(0x08)
 
+/* use Apalis GPIO1 to switch on VPGM, ON: 1 */
 static iomux_v3_cfg_t const pmic_prog_pads[] = {
-	MX6_PAD_GPIO_2__GPIO1_IO02 | MUX_PAD_CTRL(NO_PAD_CTRL),
-#	define PMIC_PROG_VOLTAGE IMX_GPIO_NR(1, 2)
+	MX6_PAD_NANDF_D4__GPIO2_IO04 | MUX_PAD_CTRL(NO_PAD_CTRL),
+#	define PMIC_PROG_VOLTAGE IMX_GPIO_NR(2, 4)
 };
 
 unsigned pmic_init(void)
@@ -59,11 +60,9 @@ unsigned pmic_init(void)
 
 		for(i=0; i<16; i++)
 			printf("\t%x",i);
-		for(j=0; j<0x80; )
-		{
+		for(j=0; j<0x80; ) {
 			printf("\n%2x",j);
-			for(i=0; i<16; i++)
-			{
+			for(i=0; i<16; i++) {
 				i2c_read(PFUZE100_I2C_ADDR, j+i, 1, &val, 1);
 				printf("\t%2x", val);
 			}
@@ -78,11 +77,9 @@ unsigned pmic_init(void)
 			return 0;
 		}
 
-		for(j=0x80; j<0x100; )
-		{
+		for(j=0x80; j<0x100; ) {
 			printf("\n%2x",j);
-			for(i=0; i<16; i++)
-			{
+			for(i=0; i<16; i++) {
 				i2c_read(PFUZE100_I2C_ADDR, j+i, 1, &val, 1);
 				printf("\t%2x", val);
 			}
@@ -97,11 +94,9 @@ unsigned pmic_init(void)
 			return 0;
 		}
 
-		for(j=0x80; j<0x100; )
-		{
+		for(j=0x80; j<0x100; ) {
 			printf("\n%2x",j);
-			for(i=0; i<16; i++)
-			{
+			for(i=0; i<16; i++) {
 				i2c_read(PFUZE100_I2C_ADDR, j+i, 1, &val, 1);
 				printf("\t%2x", val);
 			}
@@ -172,23 +167,23 @@ unsigned pmic_init(void)
 
 int pf0100_prog(void)
 {
-	unsigned char bus = 1;
-	unsigned char val;
 	unsigned i;
+	unsigned char val;
+	unsigned char bus = 1;
 
 	if(pmic_init() == 3) {
 		puts("PMIC already programmed, exiting\n");
-		return 1;
+		return CMD_RET_FAILURE;
 	}
 	/* set up gpio to manipulate vprog, initially off */
-	imx_iomux_v3_setup_multiple_pads(pmic_prog_pads, 
+	imx_iomux_v3_setup_multiple_pads(pmic_prog_pads,
 		ARRAY_SIZE(pmic_prog_pads));
 	gpio_direction_output(PMIC_PROG_VOLTAGE, 0);
 
 	if(!(0 == i2c_set_bus_num(bus) && (0 == i2c_probe(PFUZE100_I2C_ADDR))))
 	{
 		puts("i2c bus failed\n");
-		return 1;
+		return CMD_RET_FAILURE;
 	}
 
 	for (i=0; i<ARRAY_SIZE(pmic_otp_prog); i++) {
@@ -199,34 +194,35 @@ int pf0100_prog(void)
 					1, &val, 1)) {
 				printf("i2c write failed, reg 0x%2x, value"
 					"0x%2x\n", pmic_otp_prog[i].reg, val);
-				return 1;
+				return CMD_RET_FAILURE;
 			}
 			break;
 		case pmic_delay:
 			udelay(pmic_otp_prog[i].value * 1000);
 			break;
 		case pmic_vpgm:
-			gpio_direction_output(IMX_GPIO_NR(2, 4),
-				 pmic_otp_prog[i].value);
+			gpio_direction_output(PMIC_PROG_VOLTAGE,
+				pmic_otp_prog[i].value);
 			break;
 		case pmic_pwr:
 			/* TODO */
 			break;
 		}
 	}
-	return 0;
+	return CMD_RET_SUCCESS;
 }
-
 
 int do_pf0100_prog(cmd_tbl_t *cmdtp, int flag, int argc,
 		char * const argv[])
 {
+	int ret;
 	puts("Programming PMIC OTP...");
-	if(!pf0100_prog())
+	ret = pf0100_prog();
+	if (ret == CMD_RET_SUCCESS)
 		puts("done.\n");
 	else
 		puts("failed.\n");
-	return 0;
+	return ret;
 }
 
 U_BOOT_CMD(

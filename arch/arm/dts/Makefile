@@ -54,6 +54,9 @@ dtb-$(CONFIG_SOCFPGA) +=				\
 	socfpga_cyclone5_socdk.dtb			\
 	socfpga_cyclone5_socrates.dtb
 
+dtb-$(CONFIG_VF610) += vf500-colibri.dtb \
+	vf610-colibri.dtb
+
 targets += $(dtb-y)
 
 DTC_FLAGS += -R 4 -p 0x1000

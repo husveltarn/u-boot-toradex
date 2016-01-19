@@ -22,6 +22,7 @@
 #define CONFIG_USE_ARCH_MEMSET
 
 #define CONFIG_SYS_GENERIC_BOARD
+#define CONFIG_SYS_GLOBAL_TIMER
 #define CONFIG_ARCH_CPU_INIT
 #define CONFIG_ARCH_MISC_INIT
 #define CONFIG_DISPLAY_CPUINFO
@@ -57,7 +58,7 @@
 #endif
 
 /* Size of malloc() pool */
-#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 4 * 1024 * 1024)
+#define CONFIG_SYS_MALLOC_LEN		(CONFIG_ENV_SIZE + 8 * 1024 * 1024)
 
 #define CONFIG_BOARD_EARLY_INIT_F
 
@@ -66,8 +67,10 @@
 
 /* Allow to overwrite serial and ethaddr */
 #define CONFIG_ENV_OVERWRITE
-#define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 #define CONFIG_VERSION_VARIABLE
+#define CONFIG_ENV_VARS_UBOOT_CONFIG
+#define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
+
 #define CONFIG_SYS_UART_PORT		(0)
 #define CONFIG_BAUDRATE			115200
 #define CONFIG_CMD_ASKENV
@@ -77,9 +80,6 @@
 #define CONFIG_CMD_WRITEBCB
 #define CONFIG_SYS_MAX_NAND_DEVICE	1
 #define CONFIG_SYS_NAND_BASE		NFC_BASE_ADDR
-
-/* Enable driver model */
-#define CONFIG_DM
 
 /* GPIO support */
 #define CONFIG_DM_GPIO
@@ -140,6 +140,7 @@
 #define CONFIG_SERVERIP		192.168.10.1
 
 #define CONFIG_BOOTDELAY		1
+#define CONFIG_ZERO_BOOTDELAY_CHECK
 #define CONFIG_BOARD_LATE_INIT
 
 #define CONFIG_LOADADDR			0x80008000
@@ -151,61 +152,65 @@
 
 #define SD_BOOTCMD \
 	"sdargs=root=/dev/mmcblk0p2 rw rootwait\0"	\
-	"sdboot=run setup; setenv bootargs ${defargs} ${sdargs} ${mtdparts} " \
+	"sdboot=run setup; setenv bootargs ${defargs} ${sdargs} " \
 	"${setupargs} ${vidargs}; echo Booting from MMC/SD card...; " \
 	"load mmc 0:2 ${kernel_addr_r} /boot/${kernel_file} && " \
 	"load mmc 0:2 ${fdt_addr_r} /boot/${soc}-colibri-${fdt_board}.dtb && " \
-	"bootz ${kernel_addr_r} - ${fdt_addr_r}\0" \
+	"run fdt_fixup && bootz ${kernel_addr_r} - ${fdt_addr_r}\0" \
 
 #define NFS_BOOTCMD \
 	"nfsargs=ip=:::::eth0: root=/dev/nfs\0"	\
 	"nfsboot=run setup; " \
-	"setenv bootargs ${defargs} ${nfsargs} ${mtdparts} " \
+	"setenv bootargs ${defargs} ${nfsargs} " \
 	"${setupargs} ${vidargs}; echo Booting from NFS...;" \
 	"dhcp ${kernel_addr_r} && "	\
 	"tftp ${fdt_addr_r} ${soc}-colibri-${fdt_board}.dtb && " \
-	"bootz ${kernel_addr_r} - ${fdt_addr_r}\0" \
+	"run fdt_fixup && bootz ${kernel_addr_r} - ${fdt_addr_r}\0" \
 
 #define UBI_BOOTCMD	\
 	"ubiargs=ubi.mtd=ubi root=ubi0:rootfs rootfstype=ubifs " \
 	"ubi.fm_autoconvert=1\0" \
 	"ubiboot=run setup; " \
-	"setenv bootargs ${defargs} ${ubiargs} ${mtdparts} " \
+	"setenv bootargs ${defargs} ${ubiargs} " \
 	"${setupargs} ${vidargs}; echo Booting from NAND...; " \
 	"ubi part ubi && ubifsmount ubi0:rootfs && " \
 	"ubifsload ${kernel_addr_r} /boot/${kernel_file} && " \
 	"ubifsload ${fdt_addr_r} /boot/${soc}-colibri-${fdt_board}.dtb && " \
-	"bootz ${kernel_addr_r} - ${fdt_addr_r}\0" \
+	"run fdt_fixup && bootz ${kernel_addr_r} - ${fdt_addr_r}\0" \
 
 #define CONFIG_BOOTCOMMAND "run ubiboot; run sdboot; run nfsboot"
 
 #define DFU_ALT_NAND_INFO	"vf-bcb part 0,1;u-boot part 0,2;ubi part 0,4"
 
 #define CONFIG_EXTRA_ENV_SETTINGS \
-	"kernel_addr_r=0x82000000\0" \
-	"fdt_addr_r=0x84000000\0" \
-	"kernel_file=zImage\0" \
-	"fdt_file=${soc}-colibri-${fdt_board}.dtb\0" \
-	"fdt_board=eval-v3\0" \
-	"defargs=\0" \
 	"console=ttyLP0\0" \
-	"setup=setenv setupargs " \
-		"console=tty1 console=${console}" \
-		",${baudrate}n8 ${memargs} consoleblank=0\0" \
+	"defargs=\0" \
+	"dfu_alt_info=" DFU_ALT_NAND_INFO "\0" \
+	"fdt_addr_r=0x84000000\0" \
+	"fdt_board=eval-v3\0" \
+	"fdt_file=${soc}-colibri-${fdt_board}.dtb\0" \
+	"fdt_fixup=;\0" \
+	"kernel_addr_r=0x82000000\0" \
+	"kernel_file=zImage\0" \
+	"mtdparts=" MTDPARTS_DEFAULT "\0" \
+	NFS_BOOTCMD \
+	SD_BOOTCMD \
+	"setethupdate=if env exists ethaddr; then; else setenv ethaddr " \
+		"00:14:2d:00:00:00; fi; tftpboot ${loadaddr} " \
+		"flash_eth.img && source ${loadaddr}\0" \
 	"setsdupdate=mmc rescan && setenv interface mmc && " \
 		"fatload ${interface} 0:1 ${loadaddr} flash_blk.img && " \
 		"source ${loadaddr}\0" \
+	"setup=setenv setupargs " \
+		"console=tty1 console=${console}" \
+		",${baudrate}n8 ${memargs} consoleblank=0\0" \
+	"setupdate=run setsdupdate || run setusbupdate || run setethupdate\0" \
 	"setusbupdate=usb start && setenv interface usb && " \
 		"fatload ${interface} 0:1 ${loadaddr} flash_blk.img && " \
 		"source ${loadaddr}\0" \
-	"setupdate=run setsdupdate || run setusbupdate\0" \
-	"mtdparts=" MTDPARTS_DEFAULT "\0" \
-	"dfu_alt_info=" DFU_ALT_NAND_INFO "\0" \
-	"video-mode=dcufb:640x480-16@60,monitor=lcd\0" \
 	"splashpos=m,m\0" \
-	SD_BOOTCMD \
-	NFS_BOOTCMD \
-	UBI_BOOTCMD
+	UBI_BOOTCMD \
+	"video-mode=dcufb:640x480-16@60,monitor=lcd\0"
 
 /* Miscellaneous configurable options */
 #define CONFIG_SYS_LONGHELP		/* undef to save memory */
@@ -265,10 +270,15 @@
 #define CONFIG_OF_LIBFDT
 #define CONFIG_OF_BOARD_SETUP
 #define CONFIG_OF_SYSTEM_SETUP
+#define CONFIG_FDT_FIXUP_PARTITIONS
 
 #define CONFIG_CMD_BOOTZ
 #define CONFIG_SUPPORT_RAW_INITRD
 #define CONFIG_SYS_BOOT_RAMDISK_HIGH
+
+#define CONFIG_CMD_M4BOOT
+#define CONFIG_CMD_CACHE
+#define CONFIG_FIT
 
 #define CONFIG_SYS_NO_FLASH
 
@@ -302,5 +312,14 @@
 #define CONFIG_USB_STORAGE
 #define CONFIG_USB_GADGET_MASS_STORAGE
 #define CONFIG_CMD_USB_MASS_STORAGE
+
+/* Enable SPI support */
+#ifdef CONFIG_OF_CONTROL
+#define CONFIG_DM_SPI
+#define CONFIG_CMD_SPI
+#define CONFIG_FSL_DSPI
+#endif
+
+#define CONFIG_CRC32_VERIFY
 
 #endif /* __CONFIG_H */

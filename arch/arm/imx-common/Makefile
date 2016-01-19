@@ -24,10 +24,31 @@ obj-$(CONFIG_IMX_VIDEO_SKIP) += video.o
 endif
 ifeq ($(SOC),$(filter $(SOC),vf610))
 obj-y += ddrmc-vf610.o
+
+# The mini boot loader for Linux on the Cortex-M4 runs on ARMv7-M
+# architecture, hence force ARMv7-M architecture. Use objcopy with
+# binary-architecture (-B) to include the mini loader as binary blob
+quiet_cmd_ccm4_s_S = M4CC    $@
+cmd_ccm4_s_S       = $(CC) -Wall -march=armv7-m -mthumb -c -o $@ $<
+arch/arm/imx-common/vf610m4bootldr.o: arch/arm/imx-common/vf610m4bootldr.S
+	$(call if_changed,ccm4_s_S)
+
+quiet_cmd_objcopym4 = OBJCOPY $@
+cmd_objcopym4 = $(OBJCOPY) -O binary $< $@
+arch/arm/imx-common/vf610m4bootldr: arch/arm/imx-common/vf610m4bootldr.o
+	$(call if_changed,objcopym4)
+
+quiet_cmd_objcopybinm4 = OBJCOPY $@
+cmd_objcopybinm4 = $(OBJCOPY) -I binary -O elf32-littlearm -B arm $< $@
+arch/arm/imx-common/vf610m4bootldrbin.o: arch/arm/imx-common/vf610m4bootldr
+	$(call if_changed,objcopybinm4)
+
+obj-$(CONFIG_CMD_M4BOOT) += vf610m4bootldrbin.o
 endif
 obj-$(CONFIG_CMD_BMODE) += cmd_bmode.o
 obj-$(CONFIG_CMD_HDMIDETECT) += cmd_hdmidet.o
 obj-$(CONFIG_CMD_DEKBLOB) += cmd_dek.o
+obj-$(CONFIG_CMD_M4BOOT) += cmd_m4boot.o
 obj-$(CONFIG_CMD_WRITEBCB) += cmd_writebcb.o
 
 quiet_cmd_cpp_cfg = CFGS    $@

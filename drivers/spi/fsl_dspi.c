@@ -106,7 +106,7 @@ int dspi_xfer(struct spi_slave *slave, uint bitlen, const void *dout,
 				else
 					dspi_tx(dspislave, ctrl, *spi_wr++);
 			}
-            else 
+            else
 				dspi_tx(dspislave, ctrl, CONFIG_SPI_IDLE_VAL);
 
 			if (din != NULL) {
