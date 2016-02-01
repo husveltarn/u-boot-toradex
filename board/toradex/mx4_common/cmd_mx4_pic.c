@@ -19,19 +19,26 @@
 #include <errno.h>
 #include <spi.h>
 
-#define MX4_REG_BIT(bit)                (1 << (bit))
+#define REG_BIT(bit)                    (1UL << (bit))
 
-#define MX4_PRC_POWER_ON_RESET              MX4_REG_BIT(0)
-#define MX4_PRC_BROWN_OUT_RESET             MX4_REG_BIT(1)
-#define MX4_PRC_IDLE                        MX4_REG_BIT(2)
-#define MX4_PRC_SLEEP                       MX4_REG_BIT(3)
-#define MX4_PRC_WDTO                        MX4_REG_BIT(4)
-#define MX4_PRC_SWR                         MX4_REG_BIT(5)
-#define MX4_PRC_MCLR                        MX4_REG_BIT(6)
-#define MX4_PRC_CONFIG_MISMATCH             MX4_REG_BIT(7)
-#define MX4_PRC_DEEP_SLEEP                  MX4_REG_BIT(8)
-#define MX4_PRC_ILLEGAL_OPCODE_RESET        MX4_REG_BIT(9)
-#define MX4_PRC_TRAP_CONFLICT_RESET         MX4_REG_BIT(10)
+#define MX4_PRC_POWER_ON_RESET              REG_BIT(0)
+#define MX4_PRC_BROWN_OUT_RESET             REG_BIT(1)
+#define MX4_PRC_IDLE                        REG_BIT(2)
+#define MX4_PRC_SLEEP                       REG_BIT(3)
+#define MX4_PRC_WDTO                        REG_BIT(4)
+#define MX4_PRC_SWR                         REG_BIT(5)
+#define MX4_PRC_MCLR                        REG_BIT(6)
+#define MX4_PRC_CONFIG_MISMATCH             REG_BIT(7)
+#define MX4_PRC_DEEP_SLEEP                  REG_BIT(8)
+#define MX4_PRC_ILLEGAL_OPCODE_RESET        REG_BIT(9)
+#define MX4_PRC_TRAP_CONFLICT_RESET         REG_BIT(10)
+/* Below bits are fabricated and set by software on trap interrupts */
+#define MX4_PRC_TRAP_DEFAULT				REG_BIT(11)
+#define MX4_PRC_TRAP_OSC					REG_BIT(12)
+#define MX4_PRC_TRAP_ADDRESS				REG_BIT(13)
+#define MX4_PRC_TRAP_STACK					REG_BIT(14)
+#define MX4_PRC_TRAP_MATH					REG_BIT(15)
+#define MX4_PRC_PROTOCOL_WATCHDOG			REG_BIT(16)
 
 #define MX4_MAX_SPI_BYTES 8
 
@@ -57,44 +64,67 @@ enum {
 	MX4_PROT_CRC_OFFSET = 6,
 };
 
+/* 	I am aware of that there is a possibility that there might be multiple bits
+	set, at least on the hardware bits. But since we print the raw hex value as
+	well we can ignore it in this simple helper converter and just print the
+	first bit we see.
+*/
 static const char* mx4_pic_str_reset_cause(int reset_cause)
 {
 	switch(reset_cause) {
 		case MX4_PRC_POWER_ON_RESET:
-		return "Power on reset";
+			return "Power on reset";
 		break;
 		case MX4_PRC_BROWN_OUT_RESET:
-		return "Brown out reset";
+			return "Brown out reset";
 		break;
 		case MX4_PRC_IDLE:
-		return "Idle reset";
+			return "Idle reset";
 		break;
 		case MX4_PRC_SLEEP:
-		return "Sleep reset";
+			return "Sleep reset";
 		break;
 		case MX4_PRC_WDTO:
-		return "Watchdog reset";
+			return "Watchdog reset";
 		break;
 		case MX4_PRC_SWR:
-		return "Software reset";
+			return "Software reset";
 		break;
 		case MX4_PRC_MCLR:
-		return "MCLR reset";
+			return "MCLR reset";
 		break;
 		case MX4_PRC_CONFIG_MISMATCH:
-		return "Config missmatch reset";
+			return "Config missmatch reset";
 		break;
 		case MX4_PRC_DEEP_SLEEP:
-		return "Deep sleep reset";
+			return "Deep sleep reset";
 		break;
 		case MX4_PRC_ILLEGAL_OPCODE_RESET:
-		return "Illegal opcode reset";
+			return "Illegal opcode reset";
 		break;
 		case MX4_PRC_TRAP_CONFLICT_RESET:
-		return "Trap conflict reset";
+			return "Trap conflict reset";
+		break;
+		case MX4_PRC_TRAP_MATH:
+			return "Trap Math reset";
+		break;
+		case MX4_PRC_TRAP_STACK:
+			return "Trap Stack reset";
+		break;
+		case MX4_PRC_TRAP_ADDRESS:
+			return "Trap Address reset";
+		break;
+		case MX4_PRC_TRAP_OSC:
+			return "Trap OSC reset";
+		break;
+		case MX4_PRC_TRAP_DEFAULT:
+			return "Trap Default reset";
+		break;
+		case MX4_PRC_PROTOCOL_WATCHDOG:
+			return "Protocol Watchdog reset";
 		break;
 		default:
-		return "Unknown reset cause";
+			return "Unknown reset cause";
 		break;
 	}
 }
