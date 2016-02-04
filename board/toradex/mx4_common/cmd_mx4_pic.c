@@ -39,6 +39,8 @@
 #define MX4_PRC_TRAP_STACK					REG_BIT(14)
 #define MX4_PRC_TRAP_MATH					REG_BIT(15)
 #define MX4_PRC_PROTOCOL_WATCHDOG			REG_BIT(16)
+#define MX4_PRC_CLOCK_SWITCH_FAILED			REG_BIT(17)
+#define MX4_PRC_DEEP_SLEEP_EXIT				REG_BIT(18)
 
 #define MX4_MAX_SPI_BYTES 8
 
@@ -122,6 +124,12 @@ static const char* mx4_pic_str_reset_cause(int reset_cause)
 		break;
 		case MX4_PRC_PROTOCOL_WATCHDOG:
 			return "Protocol Watchdog reset";
+		break;
+		case MX4_PRC_CLOCK_SWITCH_FAILED:
+			return "Clock Switch Failed";
+		break;
+		case MX4_PRC_DEEP_SLEEP_EXIT:
+			return "Deep Sleep Exit";
 		break;
 		default:
 			return "Unknown reset cause";
