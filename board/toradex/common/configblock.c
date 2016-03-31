@@ -45,6 +45,7 @@ struct toradex_eth_addr trdx_eth_addr;
 u32 trdx_serial;
 
 const char* const toradex_modules[] = {
+	 [0] = "UNKNOWN MODULE",
 	 [1] = "Colibri PXA270 312MHz",
 	 [2] = "Colibri PXA270 520MHz",
 	 [3] = "Colibri PXA320 806MHz",
@@ -62,6 +63,8 @@ const char* const toradex_modules[] = {
 	[15] = "Colibri iMX6 DualLite 512MB",
 	[16] = "Colibri iMX6 Solo 256MB IT",
 	[17] = "Colibri iMX6 DualLite 512MB IT",
+	[18] = "UNKNOWN MODULE",
+	[19] = "UNKNOWN MODULE",
 	[20] = "Colibri T20 256MB",
 	[21] = "Colibri T20 512MB",
 	[22] = "Colibri T20 512MB IT",
@@ -74,6 +77,9 @@ const char* const toradex_modules[] = {
 	[29] = "Apalis iMX6 Dual 512MB",
 	[30] = "Colibri T30 1GB IT",
 	[31] = "Apalis T30 1GB IT",
+	[32] = "Colibri iMX7 Solo 256MB",
+	[33] = "Colibri iMX7 Dual 512MB",
+	[34] = "Apalis TK1 2GB",
 };
 
 #ifdef CONFIG_TRDX_CFG_BLOCK_IS_IN_MMC
@@ -210,6 +216,10 @@ int read_trdx_cfg_block(void)
 		offset += tag->len * 4;
 	}
 
+	/* Cap product id to avoid issues with a yet unknown one */
+	if (trdx_hw_tag.prodid > (sizeof(toradex_modules) / sizeof(toradex_modules[0])))
+		trdx_hw_tag.prodid = 0;
+
 out:
 	free(config_block);
 	return ret;
@@ -248,6 +258,11 @@ static int get_cfgblock_interactive(void)
 			else
 				trdx_hw_tag.prodid = COLIBRI_IMX6S;
 #endif /* CONFIG_MACH_TYPE */
+	} else if (!strcmp("mx7", soc)) {
+			if (gd->ram_size == 0x20000000)
+				trdx_hw_tag.prodid = COLIBRI_IMX7D;
+			else
+				trdx_hw_tag.prodid = COLIBRI_IMX7S;
 	} else if (!strcmp("tegra20", soc)) {
 		if (it == 'y' || it == 'Y')
 			if (gd->ram_size == 0x10000000)
@@ -276,6 +291,8 @@ static int get_cfgblock_interactive(void)
 				trdx_hw_tag.prodid = COLIBRI_T30;
 		}
 #endif /* CONFIG_MACH_TYPE */
+	} else if (!strcmp("tegra124", soc)) {
+		trdx_hw_tag.prodid = APALIS_TK1_2GB;
 	} else if (!strcmp("vf500", soc)) {
 		if (it == 'y' || it == 'Y')
 			trdx_hw_tag.prodid = COLIBRI_VF50_IT;

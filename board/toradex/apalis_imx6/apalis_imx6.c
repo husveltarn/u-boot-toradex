@@ -893,3 +893,11 @@ int misc_init_r(void)
 #endif
 	return 0;
 }
+
+#ifdef CONFIG_LDO_BYPASS_CHECK
+/* TODO, use external pmic, for now always ldo_enable */
+void ldo_mode_set(int ldo_bypass)
+{
+	return;
+}
+#endif

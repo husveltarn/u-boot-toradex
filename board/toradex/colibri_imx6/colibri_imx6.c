@@ -377,7 +377,7 @@ int board_eth_init(bd_t *bis)
 	int ret;
 
 	/* provide the PHY clock from the i.MX 6 */
-	ret = enable_fec_anatop_clock(ENET_50MHZ);
+	ret = enable_fec_anatop_clock(0, ENET_50MHZ);
 	if (ret)
 		return ret;
 	/* set gpr1[ENET_CLK_SEL] */
@@ -717,3 +717,11 @@ U_BOOT_CMD(
 	"Patch the DCD table to the right ddr size depending on CPU type\n",
 	""
 );
+
+#ifdef CONFIG_LDO_BYPASS_CHECK
+/* TODO, use external pmic, for now always ldo_enable */
+void ldo_mode_set(int ldo_bypass)
+{
+	return;
+}
+#endif

@@ -47,6 +47,14 @@ config TRDX_CFG_BLOCK_OFFSET
 	  Specify the byte offset of the Toradex config block within the flash
 	  device the config block is stored on.
 
+config TRDX_CFG_BLOCK_OFFSET2
+	int "Toradex config block offset, second instance"
+	default 0
+	help
+	  Specify the byte offset of the 2nd instance of the Toradex config block
+	  within the flash device the config block is stored on.
+          Set to 0 on modules which have no 2nd instance.
+
 config TRDX_CFG_BLOCK_2ND_ETHADDR
 	bool "Set the second ethernet address"
 	help

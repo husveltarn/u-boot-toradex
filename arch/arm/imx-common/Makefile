@@ -2,25 +2,37 @@
 # (C) Copyright 2000-2006
 # Wolfgang Denk, DENX Software Engineering, wd@denx.de.
 #
-# (C) Copyright 2011 Freescale Semiconductor, Inc.
+# (C) Copyright 2011-2015 Freescale Semiconductor, Inc.
 #
 # SPDX-License-Identifier:	GPL-2.0+
 #
 
-ifeq ($(SOC),$(filter $(SOC),mx25 mx35 mx5 mx6 vf610))
+ifeq ($(SOC),$(filter $(SOC),mx25 mx35 mx5 mx6 mx7 vf610))
 obj-y	= iomux-v3.o
 endif
 ifeq ($(SOC),$(filter $(SOC),mx5 mx6))
-obj-y	+= timer.o cpu.o speed.o
+obj-y	+= cpu.o speed.o
 obj-$(CONFIG_SYS_I2C_MXC) += i2c-mxv7.o
 endif
-ifeq ($(SOC),$(filter $(SOC),mx6 mxs))
+ifeq ($(SOC),$(filter $(SOC),mx5))
+obj-y  += timer.o
+endif
+ifeq ($(SOC),$(filter $(SOC),mx7))
+obj-y	+= cpu.o
+obj-$(CONFIG_SYS_I2C_MXC) += i2c-mxv7.o
+obj-$(CONFIG_GPT_TIMER) += timer.o
+obj-$(CONFIG_SYSCOUNTER_TIMER) += syscounter.o
+endif
+ifeq ($(SOC),$(filter $(SOC),mx7 mx6 mxs))
 obj-y	+= misc.o
 obj-$(CONFIG_SPL_BUILD)	+= spl.o
 endif
 ifeq ($(SOC),$(filter $(SOC),mx6))
 obj-$(CONFIG_CMD_SATA) += sata.o
 obj-$(CONFIG_IMX_VIDEO_SKIP) += video.o
+obj-$(CONFIG_MXC_RDC) += rdc-sema.o
+obj-$(CONFIG_GPT_TIMER) += timer.o
+obj-$(CONFIG_SYSCOUNTER_TIMER) += syscounter.o
 endif
 ifeq ($(SOC),$(filter $(SOC),vf610))
 obj-y += ddrmc-vf610.o
@@ -50,6 +62,7 @@ obj-$(CONFIG_CMD_HDMIDETECT) += cmd_hdmidet.o
 obj-$(CONFIG_CMD_DEKBLOB) += cmd_dek.o
 obj-$(CONFIG_CMD_M4BOOT) += cmd_m4boot.o
 obj-$(CONFIG_CMD_WRITEBCB) += cmd_writebcb.o
+obj-$(CONFIG_CMD_WRITEBCB_MX7) += cmd_writebcb_mx7.o
 
 quiet_cmd_cpp_cfg = CFGS    $@
       cmd_cpp_cfg = $(CPP) $(cpp_flags) -x c -o $@ $<

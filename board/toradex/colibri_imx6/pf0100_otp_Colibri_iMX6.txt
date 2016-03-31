@@ -8,8 +8,8 @@
 // Customer: Toradex AG
 // Program: Colibri iMX6
 // Sample marking: 
-// Date: 06.08.2014
-// Time: 14:01:01
+// Date: 24.07.2015
+// Time: 10:52:58
 // Generated from Spreadsheet Revision: P1.8
 
 /* sed commands to get from programmer script to struct */
@@ -42,7 +42,7 @@ WRITE_I2C:B5:04 // Auto gen from Row115
 WRITE_I2C:B6:01 // Auto gen from Row116
 WRITE_I2C:B8:18 // Auto gen from Row118
 WRITE_I2C:BA:01 // Auto gen from Row120
-WRITE_I2C:BD:08 // Auto gen from Row123
+WRITE_I2C:BD:0E // Auto gen from Row123
 WRITE_I2C:C0:06 // Auto gen from Row126
 WRITE_I2C:C4:04 // Auto gen from Row130
 WRITE_I2C:C8:0E // Auto gen from Row134
@@ -56,7 +56,7 @@ WRITE_I2C:DC:0A // Auto gen from Row154
 WRITE_I2C:DD:03 // Auto gen from Row155
 WRITE_I2C:E0:05 // Auto gen from Row158
 
-#if 1 /* TBB mode */
+#if 0 /* TBB mode */
 WRITE_I2C:E4:80 // TBB_POR = 1
 DELAY:10
 #else

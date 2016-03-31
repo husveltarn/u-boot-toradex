@@ -8,8 +8,8 @@
 // Customer: Toradex AG
 // Program: Colibri iMX6
 // Sample marking: 
-// Date: 06.08.2014
-// Time: 14:01:01
+// Date: 24.07.2015
+// Time: 10:52:58
 // Generated from Spreadsheet Revision: P1.8
 
 /* sed commands to get from programmer script to struct */
@@ -42,7 +42,7 @@ struct pmic_otp_prog_t pmic_otp_prog[] = {
 {pmic_i2c, 0xB6, 0x01}, // Auto gen from Row116
 {pmic_i2c, 0xB8, 0x18}, // Auto gen from Row118
 {pmic_i2c, 0xBA, 0x01}, // Auto gen from Row120
-{pmic_i2c, 0xBD, 0x08}, // Auto gen from Row123
+{pmic_i2c, 0xBD, 0x0E}, // Auto gen from Row123
 {pmic_i2c, 0xC0, 0x06}, // Auto gen from Row126
 {pmic_i2c, 0xC4, 0x04}, // Auto gen from Row130
 {pmic_i2c, 0xC8, 0x0E}, // Auto gen from Row134

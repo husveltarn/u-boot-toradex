@@ -44,8 +44,8 @@ struct mxs_nand_fcb {
 	uint32_t		num_ecc_blocks_per_page_sdk;	/* Ignored */
 	uint32_t		metadata_bytes_sdk;		/* Ignored */
 	uint32_t		erase_threshold;
-	uint32_t		boot_patch;
-	uint32_t		patch_sectors;
+	uint32_t		boot_patch;			/* not iMX7 */
+	uint32_t		patch_sectors;			/* not iMX7 */
 	uint32_t		firmware1_starting_sector;
 	uint32_t		firmware2_starting_sector;
 	uint32_t		sectors_in_firmware1;
@@ -54,11 +54,26 @@ struct mxs_nand_fcb {
 	uint32_t		badblock_marker_byte;
 	uint32_t		badblock_marker_start_bit;
 	uint32_t		bb_marker_physical_offset;
-	uint32_t		reserved1[9];
+	uint32_t		bch_type;			/* only iMX7 */
+	uint32_t		tm_timing2_read_latency;	/* only iMX7 */
+	uint32_t		tm_timing2_preambel_delay;	/* only iMX7 */
+	uint32_t		tm_timing2_ce_delay;		/* only iMX7 */
+	uint32_t		tm_timing2_postamble_delay;	/* only iMX7 */
+	uint32_t		tm_timing2_cmd_add_pause;	/* only iMX7 */
+	uint32_t		tm_timing2_data_pause;		/* only iMX7 */
+	uint32_t		tm_speed;			/* only iMX7 */
+	uint32_t		tm_timing1_busy_timeout;	/* only iMX7 */
 	uint32_t		disbbm;
-	uint32_t		reserved2[10];
+	uint32_t		bbmark_spare_offset;		/* only iMX7 */
+	uint32_t		onfi_sync_enable;		/* only iMX7 */
+	uint32_t		onfi_sync_speed;		/* only iMX7 */
+	uint32_t		onfi_sync_nand_data;		/* only iMX7 */
+	uint32_t		reserved2[6];
 	uint32_t		disbbm_search;
 	uint32_t		disbbm_search_limit;
+	uint32_t		reserved3[15];			/* only iMX7 */
+	uint32_t		read_retry_enable;		/* only iMX7 */
+	uint32_t		reserved4[1];			/* only iMX7 */
 };
 
 struct mxs_nand_dbbt {
@@ -117,6 +132,8 @@ static void create_fcb(nand_info_t *nand, uint8_t *buf, int fw1_start_address,
 	fcb->ecc_block_0_ecc_type = 6;
 #elif defined(CONFIG_SYS_NAND_VF610_NFC_60_ECC_BYTES)
 	fcb->ecc_block_0_ecc_type = 7;
+#elif defined (CONFIG_SYS_NAND_MX7_GPMI_62_ECC_BYTES)
+        fcb->ecc_block_0_ecc_type = 31;
 #endif
 
 	fcb->firmware1_starting_sector = fw1_start_address / nand->writesize;
