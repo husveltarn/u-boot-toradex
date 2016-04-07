@@ -98,12 +98,6 @@
 #undef CONFIG_SERVERIP
 #define CONFIG_SERVERIP		192.168.10.1
 
-#define CONFIG_BOOTCOMMAND \
-	"run emmcboot; echo; echo emmcboot failed; " \
-	"run sdboot; echo; echo sdboot failed; " \
-	"run usbboot; echo; echo usbboot failed; " \
-	"run nfsboot; echo; echo nfsboot failed"
-
 #define DFU_ALT_EMMC_INFO	"colibri_t30.img raw 0x0 0x500 mmcpart 1; " \
 				"boot part 0 1 mmcpart 0; " \
 				"rootfs part 0 2 mmcpart 0; " \
@@ -121,62 +115,51 @@
 		"${soc}-colibri-${fdt_board}.dtb && " \
 		"setenv dtbparam ${fdt_addr_r}\0"
 
-#define NFS_BOOTCMD \
-	"nfsargs=ip=:::::eth0:on root=/dev/nfs rw netdevwait\0" \
-	"nfsboot=usb start; run setup; setenv bootargs ${defargs} ${nfsargs} " \
-		"${setupargs} ${vidargs}; echo Booting via DHCP/TFTP/NFS...; " \
-		"run nfsdtbload; dhcp ${kernel_addr_r} " \
-		"&& bootm ${kernel_addr_r} - ${dtbparam}\0" \
-	"nfsdtbload=setenv dtbparam; tftp ${fdt_addr_r} " \
-		"${soc}-colibri-${fdt_board}.dtb " \
-		"&& setenv dtbparam ${fdt_addr_r}\0"
+#define PROBE_USB_FOR_HMUPDATE \
+	"if run is_firmware_update || mx4_pic is_extr; " \
+	"then usb start && fatls usb 0:1 && " \
+	"mx4_pic set_state 2 && fatload usb 0:1 ${loadaddr} ${updatefilename}; fi "
 
-#define SD_BOOTCMD \
-	"sdargs=ip=off root=/dev/mmcblk1p2 rw,noatime rootfstype=ext3 " \
-		"rootwait\0" \
-	"sdboot=run setup; setenv bootargs ${defargs} ${sdargs} ${setupargs} " \
-		"${vidargs}; echo Booting from SD card in 8bit slot...; " \
-		"run sddtbload; load mmc 1:1 ${kernel_addr_r} " \
-		"${boot_file} && bootm ${kernel_addr_r} - ${dtbparam}\0" \
-	"sddtbload=setenv dtbparam; load mmc 1:1 ${fdt_addr_r} " \
-		"${soc}-colibri-${fdt_board}.dtb " \
-		"&& setenv dtbparam ${fdt_addr_r}\0"
+#define PROBE_EMMC_FOR_HMUPDATE \
+	"if ${firmware_update} -eq true; then " \
+	"load mmc 0:2 ${loadaddr} /boot/${updatefilename} "\
+	"&& mx4_pic set_state 2; " \
+	"fi "
 
-#define USB_BOOTCMD \
-	"usbargs=ip=off root=/dev/sda2 rw,noatime rootfstype=ext3 " \
-		"rootwait\0" \
-	"usbboot=run setup; setenv bootargs ${defargs} ${setupargs} " \
-		"${usbargs} ${vidargs}; echo Booting from USB stick...; " \
-		"usb start && run usbdtbload; load usb 0:1 ${kernel_addr_r} " \
-		"${boot_file} && bootm ${kernel_addr_r} - ${dtbparam}\0" \
-	"usbdtbload=setenv dtbparam; load usb 0:1 ${fdt_addr_r} " \
-		"${soc}-colibri-${fdt_board}.dtb " \
-		"&& setenv dtbparam ${fdt_addr_r}\0"
+#define IS_FIRMWARE_UPDATE \
+	"if ${firmware_update} -eq true; then true; fi"
+
+#define CONFIG_BOOTCOMMAND \
+    "if run probe_usb || run probe_emmc; then " \
+	    "if source ${loadaddr}; then " \
+	    	"exit; " \
+	    "else " \
+	    	"bootm ${loadaddr}; " \
+	    "fi; " \
+    "fi; " \
+    "run emmcboot;"
 
 #define BOARD_EXTRA_ENV_SETTINGS \
+    "firmware_update=false\0" \
+	"probe_usb=" PROBE_USB_FOR_HMUPDATE "\0" \
+	"probe_emmc=" PROBE_EMMC_FOR_HMUPDATE "\0" \
+	"is_firmware_update=" IS_FIRMWARE_UPDATE "\0" \
+	"updatefilename=t30_hmupdate.img\0" \
 	"boot_file=uImage\0" \
 	"console=ttyS0\0" \
 	"defargs=core_edp_mv=1300 usb_high_speed=1\0" \
 	"dfu_alt_info=" DFU_ALT_EMMC_INFO "\0" \
 	EMMC_BOOTCMD \
 	"fdt_board=eval-v3\0" \
-	NFS_BOOTCMD \
-	SD_BOOTCMD \
 	"setethupdate=if env exists ethaddr; then; else setenv ethaddr " \
 		"00:14:2d:00:00:00; fi; usb start && tftpboot " \
 		"${kernel_addr_r} flash_eth.img\0" \
-	"setsdupdate=setenv interface mmc; setenv drive 1; mmc rescan; load " \
-		"${interface} ${drive}:1 ${kernel_addr_r} flash_blk.img\0" \
 	"setup=setenv setupargs asix_mac=${ethaddr} " \
 		"consoleblank=0 no_console_suspend=1 console=tty1 " \
 		"console=${console},${baudrate}n8 debug_uartport=lsport,0 " \
 		"vmalloc=128M mem=1012M@2048M fbmem=12M@3060M\0" \
-	"setusbupdate=usb start && setenv interface usb; setenv drive 0; " \
-		"load ${interface} ${drive}:1 ${kernel_addr_r} " \
-		"flash_blk.img\0" \
-	"setupdate=run setsdupdate || run setusbupdate || run setethupdate;" \
+	"setupdate=run setethupdate;" \
 		" source ${kernel_addr_r}\0" \
-	USB_BOOTCMD \
 	"vidargs=video=tegrafb0:640x480-16@60\0"
 
 /* Increase console I/O buffer size */
