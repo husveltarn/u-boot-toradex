@@ -159,7 +159,7 @@
 	"defargs=core_edp_mv=1300 usb_high_speed=1\0" \
 	"dfu_alt_info=" DFU_ALT_EMMC_INFO "\0" \
 	EMMC_BOOTCMD \
-	"fdt_board=eval-v3\0" \
+	"fdt_board=t30\0" \
 	"setethupdate=if env exists ethaddr; then; else setenv ethaddr " \
 		"00:14:2d:00:00:00; fi; usb start && tftpboot " \
 		"${kernel_addr_r} flash_eth.img\0" \
