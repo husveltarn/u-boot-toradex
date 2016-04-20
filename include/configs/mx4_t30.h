@@ -156,7 +156,7 @@
 	"updatefilename=t30_hmupdate.img\0" \
 	"boot_file=uImage\0" \
 	"console=ttyS0\0" \
-	"defargs=core_edp_mv=1300 usb_high_speed=1\0" \
+	"defargs=core_edp_mv=1300 usb_high_speed=1 quiet isolcpus=1\0" \
 	"dfu_alt_info=" DFU_ALT_EMMC_INFO "\0" \
 	EMMC_BOOTCMD \
 	"fdt_board=t30\0" \
