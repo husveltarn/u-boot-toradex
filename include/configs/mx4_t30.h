@@ -132,8 +132,9 @@
 
 #define PROBE_EMMC_FOR_HMUPDATE \
 	"if ${firmware_update} -eq true; then " \
-	"load mmc 0:2 ${loadaddr} /boot/${updatefilename} "\
-	"&& mx4_pic set_state 2; " \
+	"mx4_pic set_state 2; " \
+	"echo \"Loading /boot/${updatefilename}...\" " \
+	"load mmc 0:2 ${loadaddr} /boot/${updatefilename}; "\
 	"fi "
 
 #define IS_FIRMWARE_UPDATE \
