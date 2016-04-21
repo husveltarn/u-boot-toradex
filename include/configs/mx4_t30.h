@@ -116,7 +116,8 @@
 #define EMMC_BOOTCMD \
 	"emmcargs=ip=off root=/dev/mmcblk0p2 rw,noatime rootfstype=ext3 " \
 		"rootwait\0" \
-	"emmcboot=run setup; setenv bootargs ${defargs} ${emmcargs} " \
+	"emmcboot=mx4_pic restart; run setup; " \
+		"setenv bootargs ${defargs} ${emmcargs} " \
 		"${setupargs} ${vidargs}; echo Booting from internal eMMC " \
 		"chip...; run emmcdtbload; load mmc 0:1 ${kernel_addr_r} " \
 		"${boot_file} && bootm ${kernel_addr_r} - ${dtbparam}\0" \
