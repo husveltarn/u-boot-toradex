@@ -111,7 +111,7 @@
 				"boot part 0 1 mmcpart 0; " \
 				"rootfs part 0 2 mmcpart 0; " \
 				"uImage fat 0 1 mmcpart 0; " \
-				"tegra30-colibri-eval-v3.dtb fat 0 1 mmcpart 0"
+				"tegra30-mx4-t30.dtb fat 0 1 mmcpart 0"
 
 #define EMMC_BOOTCMD \
 	"emmcargs=ip=off root=/dev/mmcblk0p2 rw,noatime rootfstype=ext3 " \
@@ -122,7 +122,7 @@
 		"chip...; run emmcdtbload; load mmc 0:1 ${kernel_addr_r} " \
 		"${boot_file} && bootm ${kernel_addr_r} - ${dtbparam}\0" \
 	"emmcdtbload=setenv dtbparam; load mmc 0:1 ${fdt_addr_r} " \
-		"${soc}-colibri-${fdt_board}.dtb && " \
+		"${soc}-mx4-${fdt_board}.dtb && " \
 		"setenv dtbparam ${fdt_addr_r}\0"
 
 #define PROBE_USB_FOR_HMUPDATE \
