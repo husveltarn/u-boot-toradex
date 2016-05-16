@@ -114,7 +114,7 @@
 				"tegra30-mx4-t30.dtb fat 0 1 mmcpart 0"
 
 #define EMMC_BOOTCMD \
-	"emmcargs=ip=off root=/dev/mmcblk0p2 rw,noatime rootfstype=ext3 " \
+	"emmcargs=ip=off root=/dev/mmcblk0p4 rw,noatime rootfstype=ext3 " \
 		"rootwait\0" \
 	"emmcboot=mx4_pic restart; run setup; " \
 		"setenv bootargs ${defargs} ${emmcargs} " \
