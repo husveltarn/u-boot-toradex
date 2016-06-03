@@ -165,7 +165,7 @@
 	"setethupdate=if env exists ethaddr; then; else setenv ethaddr " \
 		"00:14:2d:00:00:00; fi; usb start && tftpboot " \
 		"${kernel_addr_r} flash_eth.img\0" \
-	"setup=setenv setupargs asix_mac=${ethaddr} " \
+	"setup=setenv setupargs asix_mac=${ethaddr} asix_mac2=${ethaddr2} " \
 		"consoleblank=0 no_console_suspend=1 console=tty1 " \
 		"console=${console},${baudrate}n8 debug_uartport=lsport,0 " \
 		"vmalloc=128M mem=1012M@2048M fbmem=12M@3060M\0" \
