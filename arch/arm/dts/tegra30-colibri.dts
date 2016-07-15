@@ -87,7 +87,7 @@
 	/* EHCI instance 0: USB1_DP/N -> USBC_P/N */
 	usb@7d000000 {
 		status = "okay";
-		dr_mode = "peripheral";
+		dr_mode = "host";
 	};
 
 	/* EHCI instance 1: USB2_DP/N -> AX88772B */
