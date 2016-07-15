@@ -62,11 +62,6 @@
 #define CONFIG_SYS_MMC_ENV_DEV		0
 #define CONFIG_SYS_MMC_ENV_PART		1
 
-/* USB client support */
-#define CONFIG_G_DNL_MANUFACTURER	"Host Mobility"
-#define CONFIG_G_DNL_VENDOR_NUM		0x1b67
-#define CONFIG_G_DNL_PRODUCT_NUM	0xffff /* Fallback, set using fixup */
-
 /* USB host support */
 #define CONFIG_USB_EHCI
 #define CONFIG_USB_EHCI_TEGRA
@@ -197,8 +192,6 @@
 #define CONFIG_SUPPORT_RAW_INITRD
 #define CONFIG_SYS_BOOT_RAMDISK_HIGH
 
-#include "tegra-common-usb-gadget.h"
-#undef CONFIG_SYS_DFU_DATA_BUF_SIZE
 #include "tegra-common-post.h"
 
 #endif /* __CONFIG_H */
