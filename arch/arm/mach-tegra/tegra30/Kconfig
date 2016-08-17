@@ -15,6 +15,9 @@ config TARGET_CARDHU
 config TARGET_COLIBRI_T30
 	bool "Toradex Colibri T30 board"
 
+config TARGET_MX4_T30
+	bool "Toradex Colibri T30 SOM on a MX-4 T30 board"
+
 config TARGET_TEC_NG
 	bool "Avionic Design TEC-NG board"
 
@@ -27,6 +30,7 @@ source "board/toradex/apalis_t30/Kconfig"
 source "board/nvidia/beaver/Kconfig"
 source "board/nvidia/cardhu/Kconfig"
 source "board/toradex/colibri_t30/Kconfig"
+source "board/toradex/mx4_t30/Kconfig"
 source "board/avionic-design/tec-ng/Kconfig"
 
 endif
