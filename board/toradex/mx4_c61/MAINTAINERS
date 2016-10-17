@@ -1,0 +1,7 @@
+MX-4 V61
+M:	Mirza Krak <mirza.krak@hostmobility.com>
+M:	Rickard Gustafsson <rickard.gustafsson@hostmobility.com>
+S:	Maintained
+F:	board/toradex/mx4_v61/
+F:	include/configs/mx4_v61.h
+F:	configs/mx4_v61_defconfig

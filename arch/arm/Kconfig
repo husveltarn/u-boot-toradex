@@ -681,6 +681,10 @@ config TARGET_MX4_V61
 	bool "Support Colibri VF50/61 on a MX-4 V61 board"
 	select CPU_V7
 
+config TARGET_MX4_C61
+	bool "Support Colibri VF50/61 on a MX-4 C61 board"
+	select CPU_V7
+
 config ZYNQ
 	bool "Xilinx Zynq Platform"
 	select CPU_V7
@@ -956,6 +960,7 @@ source "board/toradex/colibri_pxa270/Kconfig"
 source "board/toradex/colibri_vf/Kconfig"
 source "board/toradex/common/Kconfig"
 source "board/toradex/mx4_v61/Kconfig"
+source "board/toradex/mx4_c61/Kconfig"
 source "board/tqc/tqma6/Kconfig"
 source "board/trizepsiv/Kconfig"
 source "board/ttcontrol/vision2/Kconfig"
