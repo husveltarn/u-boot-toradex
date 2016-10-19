@@ -1,0 +1,7 @@
+MX4_MIL
+M:	Mirza Krak <mirza.krak@hostmobility.com>
+S:	Maintained
+F:	board/toradex/mx4_mil/
+F:	include/configs/mx4_mil.h
+F:	configs/mx4_mil_defconfig
+F:	arch/arm/dts/tegra20-colibri.dtb

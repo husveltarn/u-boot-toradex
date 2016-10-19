@@ -36,6 +36,9 @@ config TARGET_COLIBRI_T20
 config TARGET_MX4_T20
 	bool "Toradex Colibri T20 on a MX-4 T20 board"
 
+config TARGET_MX4_MIL
+	bool "Toradex Colibri T20 on a MX-4 MIL board"
+
 endchoice
 
 config SYS_SOC
@@ -52,5 +55,6 @@ source "board/nvidia/ventana/Kconfig"
 source "board/nvidia/whistler/Kconfig"
 source "board/toradex/colibri_t20/Kconfig"
 source "board/toradex/mx4_t20/Kconfig"
+source "board/toradex/mx4_mil/Kconfig"
 
 endif
