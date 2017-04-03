@@ -1135,6 +1135,7 @@ int do_fat_read_at(const char *filename, loff_t pos, void *buffer,
 				printf("\n%d file(s), %d dir(s)\n\n",
 				       files, dirs);
 				*size = 0;
+				ret = 0;
 			}
 			goto exit;
 		}
