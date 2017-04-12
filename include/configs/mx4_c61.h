@@ -45,13 +45,13 @@
 #define CONFIG_BOARD_EARLY_INIT_F
 
 #define CONFIG_FSL_LPUART
-#define LPUART_BASE			UART0_BASE
+#define LPUART_BASE			UART2_BASE
 
 /* Allow to overwrite serial and ethaddr */
 #define CONFIG_ENV_OVERWRITE
 #define CONFIG_ENV_VARS_UBOOT_RUNTIME_CONFIG
 #define CONFIG_VERSION_VARIABLE
-#define CONFIG_SYS_UART_PORT		(0)
+#define CONFIG_SYS_UART_PORT		(2)
 #define CONFIG_BAUDRATE			115200
 #define CONFIG_CMD_ASKENV
 
@@ -190,7 +190,7 @@
 	"kernel_addr_r=0x82000000\0" \
 	"fdt_addr_r=0x84000000\0" \
 	"defargs=quiet\0" \
-	"console=ttyLP0\0" \
+	"console=ttyLP2\0" \
 	"setup=setenv setupargs " \
 		"fec_mac=${ethaddr} console=tty1 console=${console}" \
 		",${baudrate}n8 ${memargs}\0" \
