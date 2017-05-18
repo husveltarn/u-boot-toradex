@@ -342,3 +342,8 @@ config CMD_SETGETDCR
 endmenu
 
 endmenu
+
+config CMD_FIT_VERIFY
+	bool "Verify FIT image"
+	  help
+	    Enable FIT verification
