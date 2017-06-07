@@ -10,24 +10,16 @@
 
 	images {
 		script@1 {
-			data = /incbin/("vf_hmupdate.img");
+			data = /incbin/("out.scr");
 			type = "script";
+			load = "0x00408000";
+			entry = "0x00408058";
 			compression = "none";
 			os = "linux";
 			arch = "arm";
-			hash@1 {
-				algo = "sha1";
-			};
-		};
-	};
-	configurations {
-		default = "conf@1";
-		conf@1 {
-			script = "script@1";
 			signature@1 {
 				algo = "sha1,rsa2048";
 				key-name-hint = "dev";
-				sign-images = "script";
 			};
 		};
 	};
