@@ -345,5 +345,5 @@ endmenu
 
 config CMD_FIT_VERIFY
 	bool "Verify FIT image"
-	  help
-	    Enable FIT verification
+	help
+	  Enable FIT verification

@@ -192,7 +192,6 @@ obj-$(CONFIG_YAFFS2) += cmd_yaffs2.o
 obj-$(CONFIG_CMD_SPL) += cmd_spl.o
 obj-$(CONFIG_CMD_ZIP) += cmd_zip.o
 obj-$(CONFIG_CMD_ZFS) += cmd_zfs.o
-obj-$(CONFIG_CMD_FIT_VERIFY) += cmd_fit_verify.o
 
 # others
 obj-$(CONFIG_BOOTSTAGE) += bootstage.o
@@ -271,6 +270,7 @@ endif
 
 obj-$(CONFIG_CMD_BLOB) += cmd_blob.o
 
+obj-$(CONFIG_CMD_FIT_VERIFY) += cmd_fit_verify.o
 # We always have this since drivers/ddr/fs/interactive.c needs it
 obj-y += cli_simple.o
 
