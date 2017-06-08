@@ -15,12 +15,19 @@
 			load = "0x00408000";
 			entry = "0x00408058";
 			compression = "none";
-			os = "linux";
-			arch = "arm";
+			hash@1 {
+				algo = "sha1";
+			};
 			signature@1 {
 				algo = "sha1,rsa2048";
 				key-name-hint = "dev";
 			};
+		};
+	};
+	configurations {
+		default = "conf@1";
+		conf@1 {
+			script = "script@1";
 		};
 	};
 };
