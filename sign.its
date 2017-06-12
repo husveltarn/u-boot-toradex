@@ -1,0 +1,29 @@
+/*
+ * Automatic software update for U-Boot
+ */
+
+/dts-v1/;
+
+/ {
+	description = "Upgrade Image";
+	#address-cells = <1>;
+
+	images {
+		script@1 {
+			data = "";
+			hash@1 {
+				algo = "sha1";
+			};
+			signature@1 {
+				algo = "sha1,rsa2048";
+				key-name-hint = "dev";
+			};
+		};
+	};
+	configurations {
+		default = "conf@1";
+		conf@1 {
+			script = "script@1";
+		};
+	};
+};
